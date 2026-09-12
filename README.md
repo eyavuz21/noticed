@@ -1,13 +1,13 @@
-# Giftlore
+# Noticed
 
 A private log of what you learn about the people you love, turned into gift ideas when an occasion comes round.
 
-**Live site:** https://giftlore.vercel.app
+**Live site:** https://noticed-app.vercel.app
 **Also on claude.ai:** https://claude.ai/code/artifact/80e302cc-ce64-4454-ba60-b2415c5bff33
 
 ## The idea
 
-Most gifting apps start from the shop. Giftlore starts from the person. You keep a short, private record of the things people tell you in passing (she's started pottery, he misses proper Turkish coffee, she keeps quoting *Olive Kitteridge*), and when a birthday comes round the app reads those notes and suggests gifts that actually connect to them: objects, experiences, places to go, or something to pay for on their behalf. Mostly things you can get in the UK within 48 hours.
+Most gifting apps start from the shop. Noticed starts from the person. You keep a short, private record of the things people tell you in passing (she's started pottery, he misses proper Turkish coffee, she keeps quoting *Olive Kitteridge*), and when a birthday comes round the app reads those notes and suggests gifts that actually connect to them: objects, experiences, places to go, or something to pay for on their behalf. Mostly things you can get in the UK within 48 hours.
 
 The longer you use it, the better it gets, and the harder it is to leave. The notes are the product.
 
@@ -48,7 +48,7 @@ and put `ANTHROPIC_API_KEY=...` in a `.env` file (gitignored).
 
 ## Deploying
 
-The repo is connected to Vercel: every push to `main` deploys to https://giftlore.vercel.app automatically.
+The repo is connected to Vercel: every push to `main` deploys to https://noticed-app.vercel.app automatically.
 
 Environment variables (Vercel → Settings → Environment Variables):
 
@@ -62,7 +62,7 @@ Environment variables (Vercel → Settings → Environment Variables):
 
 1. Create a free project at supabase.com. Any region; London is fine.
 2. SQL Editor → paste `supabase/schema.sql` → Run.
-3. Authentication → URL Configuration → Site URL `https://giftlore.vercel.app`, and add it to Redirect URLs.
+3. Authentication → URL Configuration → Site URL `https://noticed-app.vercel.app`, and add it to Redirect URLs.
 4. Copy the Project URL and anon key into Vercel as `SUPABASE_URL` and `SUPABASE_ANON_KEY`, then redeploy.
 
 Supabase's built-in email sender is rate-limited to a handful of messages an hour, which is fine for the two of us and not for launch. Before launch, add a custom SMTP provider (Resend's free tier is enough) under Authentication → SMTP.
@@ -82,4 +82,4 @@ See the planning doc for the full picture. In order:
 
 ## Founders
 
-Emre Yavuz and his sister. September 2026. The name is gift + lore: the lore being everything you know about a person.
+Emre Yavuz and his sister. September 2026. The name: the whole product is noticing things about people, and "she noticed" is the feeling a good gift gives.

@@ -1,4 +1,4 @@
-<title>Giftlore</title>
+<title>Noticed</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Manrope:wght@400;500;600;700;800&display=swap">
 <style>
@@ -182,10 +182,10 @@ dialog h2{font-size:24px; margin-bottom:12px}
 <header class="top">
   <div class="row">
     <div class="brand">
-      <div class="bow" aria-hidden="true">G</div>
+      <div class="bow" aria-hidden="true">N</div>
       <div>
-        <h1><span class="w1">Gift</span><span class="w2">lore</span></h1>
-        <small>Everything you know about them, kept safe, turned into the right gift.</small>
+        <h1><span class="w1">Notice</span><span class="w2">d</span></h1>
+        <small>The things you noticed about them, turned into the right gift.</small>
       </div>
     </div>
     <div class="actions">
@@ -211,7 +211,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
 
 <script>
 (function(){
-  const KEY='giftlore.v1'; const OLD_KEYS=['wrapid.v1','keepsake.v1'];
+  const KEY='noticed.v1'; const OLD_KEYS=['giftlore.v1','wrapid.v1','keepsake.v1'];
   const TAGS=['music','books','food & drink','pampering','home','fashion','outdoors','tech','art','travel','sport','wellness','kids','plants','games'];
   const ACCENTS=['tangerine','marigold','pistachio','cornflower','bubblegum'];
   const EMOJIS=['🌻','🎸','📚','🍰','🧘','🏔️','🎨','🐶','🌊','🍷','⚽','🎬','🧶','🚴','🌿','🎹','☕','🦋','🪴','🎁','✨','🌈','🐱','🍜'];
@@ -306,7 +306,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
   let ideaFilter='all';
   function renderMain(){
     const m=$('#main'); const p=person();
-    if(!p){ m.innerHTML=`<div class="empty"><h2>No one here yet</h2><p>Add the people you buy for most. Then jot down what you learn about them as you go, and Giftlore turns it into gift ideas when an occasion comes round.</p><p><button class="btn primary" id="emptyAdd">+ Add a person</button></p></div>`; $('#emptyAdd').onclick=openAdd; return; }
+    if(!p){ m.innerHTML=`<div class="empty"><h2>No one here yet</h2><p>Add the people you buy for most. Then jot down what you learn about them as you go, and Noticed turns it into gift ideas when an occasion comes round.</p><p><button class="btn primary" id="emptyAdd">+ Add a person</button></p></div>`; $('#emptyAdd').onclick=openAdd; return; }
     const dd=daysToBirthday(p.birthday); const acc=ACCENTS[state.people.indexOf(p)%ACCENTS.length]; m.style.setProperty('--acc',`var(--${acc})`);
     const meta=[];
     if(p.birthday) meta.push(`<span>🎂 ${fmt(p.birthday)}${dd!==null?` <b class="tabular">(${dd===0?'today':'in '+dd+' days'})</b>`:''}</span>`);
@@ -350,7 +350,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
               <span class="kind ${i.type}" title="${i.type}">${i.type==='object'?'OBJ':'EXP'}</span>
               <div><div class="ti">${i.link?`<a href="${esc(i.link)}" target="_blank" rel="noopener">${esc(i.title)}</a>`:esc(i.title)}${i.fast?'<span class="fast">48h</span>':''}</div>${i.why?`<div class="why">${esc(i.why)}</div>`:''}<div class="pr">${esc(i.price||'')}${i.given?` · given ${esc(fmt(i.givenOn))}`:''}</div></div>
               <div class="actions">${i.given?'':`<button class="btn sm mint" data-given="${i.id}">Given</button>`}<button class="btn sm ghost" data-delidea="${i.id}" aria-label="Delete idea">×</button></div>
-            </li>`).join(''):'<li class="idea"><span class="kind object">OBJ</span><div><div class="ti">No ideas saved yet</div><div class="why">Add one below, or let Giftlore suggest some from the notes.</div></div><span></span></li>'}
+            </li>`).join(''):'<li class="idea"><span class="kind object">OBJ</span><div><div class="ti">No ideas saved yet</div><div class="why">Add one below, or let Noticed suggest some from the notes.</div></div><span></span></li>'}
           </ul>
           <form class="form" id="ideaForm">
             <label for="ideaT">Add an idea</label>
