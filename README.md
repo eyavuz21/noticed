@@ -3,7 +3,6 @@
 A private log of what you learn about the people you love, turned into gift ideas when an occasion comes round.
 
 **Live site:** https://noticedapp.vercel.app
-**Also on claude.ai:** https://claude.ai/code/artifact/80e302cc-ce64-4454-ba60-b2415c5bff33
 
 ## The idea
 
@@ -32,8 +31,6 @@ Data lives in the browser (localStorage). Nothing is pulled from Instagram or an
 - `api/_search.js`: one search interface, two providers. LinkUp (official SDK) or Tavily (REST), chosen by whichever key is set, `SEARCH_PROVIDER` to force one. Never throws: no link is not an error.
 - `api/config.js`: hands the page its public Supabase config, if any.
 - `supabase/schema.sql`: households, members, one JSON state document per household, row-level security, and three RPCs (`ensure_household`, `join_household`, `save_state`).
-
-When the page is opened on claude.ai it uses the viewer's built-in `sample` capability instead, so the same file works in both places.
 
 ## Running it locally
 
