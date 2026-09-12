@@ -1,0 +1,445 @@
+<title>Keepsake</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap">
+<style>
+:root{
+  --paper:#FFF8EE; --card:#FFFFFF; --ink:#2A2440; --muted:#6B6480; --line:#F0E4D2; --soft:#FFF1DC;
+  --tangerine:#FF6B35; --marigold:#FFC532; --pistachio:#3DBB86; --cornflower:#4F7CFF; --bubblegum:#FF5DA2;
+  --tangerine-ink:#FFFFFF; --chip:#FFF3E6; --chip-ink:#B4451B; --shadow:0 10px 30px rgba(42,36,64,.08);
+  --focus:#4F7CFF;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#1E1B2E; --card:#2A2640; --ink:#F6F1FF; --muted:#B3ABC9; --line:#3B3654; --soft:#332E4D;
+    --tangerine:#FF7D4D; --marigold:#FFD053; --pistachio:#5FD6A3; --cornflower:#7A9BFF; --bubblegum:#FF7AB8;
+    --tangerine-ink:#1E1B2E; --chip:#3A3256; --chip-ink:#FFC9AE; --shadow:0 10px 30px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#1E1B2E; --card:#2A2640; --ink:#F6F1FF; --muted:#B3ABC9; --line:#3B3654; --soft:#332E4D;
+  --tangerine:#FF7D4D; --marigold:#FFD053; --pistachio:#5FD6A3; --cornflower:#7A9BFF; --bubblegum:#FF7AB8;
+  --tangerine-ink:#1E1B2E; --chip:#3A3256; --chip-ink:#FFC9AE; --shadow:0 10px 30px rgba(0,0,0,.35);
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:"Nunito", "Segoe UI", system-ui, sans-serif; font-size:15px; line-height:1.5;
+  min-height:100vh;
+}
+h1,h2,h3,.display{font-family:"Fredoka","Nunito",system-ui,sans-serif; letter-spacing:-.01em; text-wrap:balance; margin:0}
+a{color:var(--cornflower)}
+button{font:inherit; cursor:pointer}
+input,select,textarea{font:inherit; color:var(--ink); background:var(--card); border:1.5px solid var(--line); border-radius:12px; padding:9px 12px; width:100%}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid var(--focus); outline-offset:2px}
+textarea{min-height:80px; resize:vertical}
+.tabular{font-variant-numeric:tabular-nums}
+
+/* header: wrapping-paper confetti */
+.top{
+  position:relative; overflow:hidden; padding:22px 24px 18px; border-bottom:2px solid var(--line);
+  background:
+    radial-gradient(circle at 12% 30%, var(--marigold) 0 5px, transparent 6px),
+    radial-gradient(circle at 28% 75%, var(--bubblegum) 0 4px, transparent 5px),
+    radial-gradient(circle at 44% 20%, var(--pistachio) 0 4px, transparent 5px),
+    radial-gradient(circle at 61% 70%, var(--cornflower) 0 5px, transparent 6px),
+    radial-gradient(circle at 78% 25%, var(--tangerine) 0 4px, transparent 5px),
+    radial-gradient(circle at 92% 65%, var(--marigold) 0 4px, transparent 5px),
+    var(--card);
+}
+.top .row{display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; max-width:1180px; margin:0 auto}
+.brand{display:flex; align-items:center; gap:12px}
+.bow{
+  width:44px; height:44px; border-radius:14px; display:grid; place-items:center;
+  background:linear-gradient(135deg,var(--tangerine),var(--bubblegum)); color:#fff; font-family:"Fredoka"; font-weight:700; font-size:24px;
+  box-shadow:0 6px 16px rgba(255,107,53,.35);
+}
+.brand h1{font-size:30px; font-weight:700}
+.brand small{display:block; color:var(--muted); font-family:"Nunito"; font-weight:600; font-size:13px; letter-spacing:.01em}
+.actions{display:flex; gap:8px; flex-wrap:wrap}
+
+.btn{
+  display:inline-flex; align-items:center; gap:8px; border:none; border-radius:999px; padding:10px 16px; font-weight:800;
+  background:var(--soft); color:var(--ink); transition:transform .08s ease, box-shadow .15s ease;
+}
+.btn:hover{transform:translateY(-1px); box-shadow:var(--shadow)}
+.btn.primary{background:var(--tangerine); color:var(--tangerine-ink); box-shadow:0 8px 18px rgba(255,107,53,.30)}
+.btn.sun{background:var(--marigold); color:#2A2440}
+.btn.mint{background:var(--pistachio); color:#12301F}
+.btn.sm{padding:7px 12px; font-size:13px}
+.btn.ghost{background:transparent; border:1.5px solid var(--line)}
+.btn[disabled]{opacity:.55; cursor:not-allowed; transform:none; box-shadow:none}
+
+/* layout */
+.app{max-width:1180px; margin:0 auto; padding:20px 24px 60px; display:grid; grid-template-columns:300px 1fr; gap:20px}
+@media (max-width:860px){ .app{grid-template-columns:1fr} }
+.panel{background:var(--card); border:1.5px solid var(--line); border-radius:20px}
+.side{padding:16px; align-self:start; position:sticky; top:16px}
+.side h2{font-size:18px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center}
+.count{font-family:"Nunito"; font-size:12px; font-weight:800; color:var(--muted); letter-spacing:.06em; text-transform:uppercase}
+.people{display:flex; flex-direction:column; gap:6px; list-style:none; margin:0; padding:0}
+.person{
+  display:grid; grid-template-columns:44px 1fr auto; align-items:center; gap:10px; width:100%; text-align:left;
+  padding:8px; border-radius:14px; border:1.5px solid transparent; background:transparent; color:var(--ink);
+}
+.person:hover{background:var(--soft)}
+.person.active{background:var(--soft); border-color:var(--marigold)}
+.avatar{width:44px; height:44px; border-radius:14px; display:grid; place-items:center; font-size:24px; background:var(--chip)}
+.person .name{font-weight:800; line-height:1.15}
+.person .rel{font-size:12px; color:var(--muted); font-weight:600}
+.due{font-size:11px; font-weight:800; padding:4px 8px; border-radius:999px; background:var(--chip); color:var(--chip-ink); white-space:nowrap}
+.due.soon{background:var(--marigold); color:#2A2440}
+.due.today{background:var(--bubblegum); color:#fff}
+
+.main{padding:22px; min-height:520px}
+.empty{padding:40px 20px; text-align:center; color:var(--muted)}
+.empty h2{color:var(--ink); font-size:26px; margin-bottom:8px}
+
+.profile{display:grid; grid-template-columns:72px 1fr auto; gap:16px; align-items:start; padding-bottom:18px; border-bottom:2px dashed var(--line); margin-bottom:18px}
+.profile .avatar{width:72px; height:72px; font-size:40px; border-radius:20px}
+.profile h2{font-size:30px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 14px; color:var(--muted); font-weight:600; font-size:13.5px; margin-top:4px}
+.meta a{font-weight:700}
+.pill{display:inline-block; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:800; background:var(--chip); color:var(--chip-ink)}
+.pill.me{background:var(--cornflower); color:#fff}
+
+.sections{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+@media (max-width:1000px){ .sections{grid-template-columns:1fr} }
+.sec h3{font-size:19px; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px}
+.sec h3 .hint{font-family:"Nunito"; font-size:12px; font-weight:700; color:var(--muted); letter-spacing:.04em; text-transform:uppercase}
+.log{list-style:none; margin:0 0 12px; padding:0; display:flex; flex-direction:column; gap:8px; max-height:340px; overflow:auto}
+.note{background:var(--soft); border-radius:14px; padding:10px 12px}
+.note .d{font-size:12px; font-weight:800; color:var(--muted); letter-spacing:.04em}
+.note .t{margin:2px 0 6px}
+.note img{max-width:100%; border-radius:10px; margin-top:6px; display:block}
+.tags{display:flex; flex-wrap:wrap; gap:6px}
+.tag{font-size:11.5px; font-weight:800; padding:3px 9px; border-radius:999px; background:var(--card); border:1.5px solid var(--line); color:var(--ink)}
+.tag.on,.tagbtn.on{background:var(--marigold); border-color:var(--marigold); color:#2A2440}
+.tagbtn{font-size:12px; font-weight:800; padding:5px 10px; border-radius:999px; background:var(--card); border:1.5px solid var(--line); color:var(--ink)}
+.form{display:grid; gap:8px; background:var(--card); border:1.5px dashed var(--line); border-radius:14px; padding:12px}
+.form .two{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.form label{font-size:12px; font-weight:800; color:var(--muted); letter-spacing:.04em; text-transform:uppercase}
+
+.ideas{list-style:none; margin:0 0 12px; padding:0; display:flex; flex-direction:column; gap:8px}
+.idea{display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:start; background:var(--soft); border-radius:14px; padding:10px 12px}
+.idea.given{opacity:.6}
+.kind{width:34px; height:34px; border-radius:10px; display:grid; place-items:center; font-weight:800; font-size:12px; font-family:"Fredoka"}
+.kind.object{background:var(--cornflower); color:#fff}
+.kind.experience{background:var(--pistachio); color:#12301F}
+.idea .ti{font-weight:800}
+.idea .why{font-size:13px; color:var(--muted)}
+.idea .pr{font-size:12.5px; font-weight:800; margin-top:3px}
+.fast{font-size:11px; font-weight:800; color:var(--chip-ink); background:var(--chip); padding:2px 7px; border-radius:999px; margin-left:6px}
+.filters{display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap}
+
+.ai{margin-top:18px; padding:16px; border-radius:18px; background:linear-gradient(135deg, var(--soft), var(--card)); border:1.5px solid var(--line)}
+.ai h3{font-size:19px; margin-bottom:6px}
+.ai p{margin:0 0 10px; color:var(--muted); font-size:13.5px}
+.ai .row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+.ai select{width:auto}
+.suggest{list-style:none; margin:12px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px}
+.sug{background:var(--card); border:1.5px solid var(--line); border-radius:14px; padding:12px; display:flex; flex-direction:column; gap:6px}
+.sug .ti{font-weight:800; display:flex; gap:8px; align-items:center}
+.sug .why{font-size:13px; color:var(--muted)}
+.sug .where{font-size:12.5px}
+.sug .foot{display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:6px}
+.status{font-size:13px; font-weight:700; color:var(--muted); margin-top:8px; min-height:1.4em}
+
+dialog{border:none; border-radius:22px; padding:0; width:min(560px, 92vw); background:var(--card); color:var(--ink); box-shadow:var(--shadow)}
+dialog::backdrop{background:rgba(42,36,64,.45)}
+dialog .in{padding:22px}
+dialog h2{font-size:24px; margin-bottom:12px}
+.emojis{display:flex; flex-wrap:wrap; gap:6px}
+.emojis button{width:38px; height:38px; border-radius:10px; border:1.5px solid var(--line); background:var(--card); font-size:20px}
+.emojis button.on{border-color:var(--tangerine); background:var(--chip)}
+.dlgrow{display:flex; gap:8px; justify-content:flex-end; margin-top:14px}
+.foot-note{font-size:12.5px; color:var(--muted); text-align:center; max-width:1180px; margin:0 auto; padding:0 24px 30px}
+.example-badge{font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); border:1.5px dashed var(--line); padding:2px 7px; border-radius:999px}
+.toast{position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--ink); color:var(--paper); padding:10px 16px; border-radius:999px; font-weight:800; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:opacity .2s}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion: reduce){ .btn{transition:none} .toast{transition:none} }
+</style>
+
+<header class="top">
+  <div class="row">
+    <div class="brand">
+      <div class="bow" aria-hidden="true">K</div>
+      <div>
+        <h1>Keepsake</h1>
+        <small>Remember what makes them light up. Then give them exactly that.</small>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn ghost sm" id="btnExport" title="Copy your data as text so you can paste it to someone else">Copy backup</button>
+      <button class="btn ghost sm" id="btnImport">Paste backup</button>
+      <button class="btn ghost sm" id="btnReset">Reset examples</button>
+      <button class="btn primary" id="btnAdd">+ Add a person</button>
+    </div>
+  </div>
+</header>
+
+<main class="app">
+  <aside class="panel side">
+    <h2>Your people <span class="count" id="count"></span></h2>
+    <ul class="people" id="people"></ul>
+  </aside>
+  <section class="panel main" id="main"></section>
+</main>
+
+<p class="foot-note">Working title. Your data stays in this browser until you copy a backup. Nothing is pulled from Instagram or anywhere else: what you know about someone, you add yourself.</p>
+
+<dialog id="dlg"><div class="in" id="dlgIn"></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  const KEY='keepsake.v1';
+  const TAGS=['music','books','food & drink','pampering','home','fashion','outdoors','tech','art','travel','sport','wellness','kids','plants','games'];
+  const EMOJIS=['🌻','🎸','📚','🍰','🧘','🏔️','🎨','🐶','🌊','🍷','⚽','🎬','🧶','🚴','🌿','🎹','☕','🦋','🪴','🎁','✨','🌈','🐱','🍜'];
+  const today=()=>new Date().toISOString().slice(0,10);
+  const uid=()=>Math.random().toString(36).slice(2,10);
+
+  function seed(){
+    return {sel:null, people:[
+      {id:uid(), name:'Sarah', emoji:'🎨', rel:'Sister', birthday:'1995-11-03', insta:'sarah.makes', spotify:'', budget:40, example:true, isMe:false,
+        notes:[
+          {id:uid(), d:'2026-09-06', t:'Started a pottery evening class in Crouch End. Came back covered in slip and completely happy.', tags:['art'], img:''},
+          {id:uid(), d:'2026-08-24', t:'Said the V&A ceramics rooms were her favourite thing in London. Wants to go back with more time.', tags:['art','outdoors'], img:''},
+          {id:uid(), d:'2026-07-12', t:'Has been listening to a lot of Nala Sinephro and Alice Coltrane while working.', tags:['music'], img:''},
+          {id:uid(), d:'2026-06-30', t:'Reading Olive Kitteridge and keeps quoting it.', tags:['books'], img:''}
+        ],
+        ideas:[
+          {id:uid(), title:'Half-day wheel-throwing workshop, Skandihus', type:'experience', link:'', price:'£65', fast:true, given:false, why:'Extends the class she already loves'},
+          {id:uid(), title:'Studio apron in waxed cotton', type:'object', link:'', price:'£38', fast:true, given:true, givenOn:'2026-05-10', why:'Given for her last birthday'}
+        ]},
+      {id:uid(), name:'Dad', emoji:'🌿', rel:'Father', birthday:'1960-02-18', insta:'', spotify:'', budget:50, example:true, isMe:false,
+        notes:[
+          {id:uid(), d:'2026-09-01', t:'Spent the whole weekend on the tomatoes. Wants a proper greenhouse thermometer.', tags:['plants','home'], img:''},
+          {id:uid(), d:'2026-08-15', t:'Mentioned missing Turkish coffee made properly, the kind with the foam.', tags:['food & drink'], img:''}
+        ],
+        ideas:[]},
+      {id:uid(), name:'Me', emoji:'🎹', rel:'That is you', birthday:'', insta:'', spotify:'', budget:30, example:true, isMe:true,
+        notes:[
+          {id:uid(), d:'2026-09-10', t:'Sang at the Proms. Still can\'t quite believe it. Want to mark it somehow.', tags:['music'], img:''},
+          {id:uid(), d:'2026-09-05', t:'Keep meaning to get back to running on the Heath early mornings.', tags:['sport','outdoors'], img:''}
+        ],
+        ideas:[]}
+    ]};
+  }
+  function load(){ try{ const s=localStorage.getItem(KEY); if(s) return JSON.parse(s); }catch(e){} return seed(); }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+  let state=load();
+  if(!state.sel && state.people[0]) state.sel=state.people[0].id;
+
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),1800); }
+
+  function daysToBirthday(b){
+    if(!b) return null; const n=new Date(); n.setHours(0,0,0,0);
+    const [y,m,d]=b.split('-').map(Number); let next=new Date(n.getFullYear(),m-1,d);
+    if(next<n) next=new Date(n.getFullYear()+1,m-1,d);
+    return Math.round((next-n)/86400000);
+  }
+  const fmt=d=>{ if(!d) return ''; const [y,m,dd]=d.split('-'); return new Date(+y,+m-1,+dd).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); };
+  const person=()=>state.people.find(p=>p.id===state.sel);
+
+  function renderSide(){
+    const ul=$('#people'); ul.innerHTML='';
+    $('#count').textContent=state.people.length+(state.people.length===1?' person':' people');
+    const sorted=[...state.people].sort((a,b)=>{const da=daysToBirthday(a.birthday)??999, db=daysToBirthday(b.birthday)??999; return da-db;});
+    for(const p of sorted){
+      const li=document.createElement('li'); const b=document.createElement('button');
+      b.className='person'+(p.id===state.sel?' active':''); b.setAttribute('aria-pressed', p.id===state.sel);
+      const dd=daysToBirthday(p.birthday);
+      let due=''; if(dd!==null){ due=`<span class="due ${dd===0?'today':dd<=14?'soon':''} tabular">${dd===0?'Today!':dd+'d'}</span>`; }
+      b.innerHTML=`<span class="avatar" aria-hidden="true">${esc(p.emoji)}</span><span><span class="name">${esc(p.name)}</span><br><span class="rel">${esc(p.rel)}</span></span>${due}`;
+      b.onclick=()=>{state.sel=p.id; save(); render();};
+      li.appendChild(b); ul.appendChild(li);
+    }
+  }
+
+  let ideaFilter='all';
+  function renderMain(){
+    const m=$('#main'); const p=person();
+    if(!p){ m.innerHTML=`<div class="empty"><h2>No one here yet</h2><p>Add the people you buy for most. Then jot down what you learn about them as you go, and Keepsake turns it into gift ideas when an occasion comes round.</p><p><button class="btn primary" id="emptyAdd">+ Add a person</button></p></div>`; $('#emptyAdd').onclick=openAdd; return; }
+    const dd=daysToBirthday(p.birthday);
+    const meta=[];
+    if(p.birthday) meta.push(`<span>🎂 ${fmt(p.birthday)}${dd!==null?` <b class="tabular">(${dd===0?'today':'in '+dd+' days'})</b>`:''}</span>`);
+    if(p.budget) meta.push(`<span>Usual budget <b>£${esc(p.budget)}</b></span>`);
+    if(p.insta) meta.push(`<a href="https://instagram.com/${esc(p.insta.replace('@',''))}" target="_blank" rel="noopener">@${esc(p.insta.replace('@',''))}</a>`);
+    if(p.spotify) meta.push(`<a href="${esc(p.spotify)}" target="_blank" rel="noopener">Spotify</a>`);
+    const visibleIdeas=p.ideas.filter(i=>ideaFilter==='all'||i.type===ideaFilter);
+    m.innerHTML=`
+      <div class="profile">
+        <span class="avatar" aria-hidden="true">${esc(p.emoji)}</span>
+        <div>
+          <h2>${esc(p.name)} ${p.isMe?'<span class="pill me">you</span>':''} ${p.example?'<span class="example-badge">example</span>':''}</h2>
+          <div class="meta"><span class="pill">${esc(p.rel)}</span>${meta.join('')}</div>
+        </div>
+        <div class="actions"><button class="btn sm ghost" id="edit">Edit</button><button class="btn sm ghost" id="del">Remove</button></div>
+      </div>
+
+      <div class="sections">
+        <div class="sec">
+          <h3>What you've learnt <span class="hint tabular">${p.notes.length} notes</span></h3>
+          <ul class="log" id="log">${p.notes.length?p.notes.map(n=>`
+            <li class="note"><div class="d">${esc(fmt(n.d))}</div><div class="t">${esc(n.t)}</div>${n.img?`<img src="${esc(n.img)}" alt="">`:''}<div class="tags">${n.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}<button class="tagbtn" data-delnote="${n.id}" title="Delete note" aria-label="Delete note">×</button></div></li>`).join(''):'<li class="note"><div class="t">Nothing yet. The first note is usually something they said in passing.</div></li>'}
+          </ul>
+          <form class="form" id="noteForm">
+            <label for="noteT">Add a note</label>
+            <textarea id="noteT" placeholder="e.g. Said she'd love to try a proper omakase. Hates surprises on the day itself." required></textarea>
+            <div class="two"><div><label for="noteD">Date</label><input type="date" id="noteD" value="${today()}"></div><div><label for="noteI">Image link (optional)</label><input type="url" id="noteI" placeholder="https://…"></div></div>
+            <div class="tags" id="noteTags">${TAGS.map(t=>`<button type="button" class="tagbtn" data-tag="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+            <div><button class="btn sun sm" type="submit">Save note</button></div>
+          </form>
+        </div>
+
+        <div class="sec">
+          <h3>Gift ideas <span class="hint tabular">${p.ideas.filter(i=>!i.given).length} open</span></h3>
+          <div class="filters">
+            ${['all','object','experience'].map(f=>`<button class="tagbtn ${ideaFilter===f?'on':''}" data-filter="${f}">${f==='all'?'All':f==='object'?'Objects':'Experiences & places'}</button>`).join('')}
+          </div>
+          <ul class="ideas" id="ideas">${visibleIdeas.length?visibleIdeas.map(i=>`
+            <li class="idea ${i.given?'given':''}">
+              <span class="kind ${i.type}" title="${i.type}">${i.type==='object'?'OBJ':'EXP'}</span>
+              <div><div class="ti">${i.link?`<a href="${esc(i.link)}" target="_blank" rel="noopener">${esc(i.title)}</a>`:esc(i.title)}${i.fast?'<span class="fast">48h</span>':''}</div>${i.why?`<div class="why">${esc(i.why)}</div>`:''}<div class="pr">${esc(i.price||'')}${i.given?` · given ${esc(fmt(i.givenOn))}`:''}</div></div>
+              <div class="actions">${i.given?'':`<button class="btn sm mint" data-given="${i.id}">Given</button>`}<button class="btn sm ghost" data-delidea="${i.id}" aria-label="Delete idea">×</button></div>
+            </li>`).join(''):'<li class="idea"><span class="kind object">OBJ</span><div><div class="ti">No ideas saved yet</div><div class="why">Add one below, or let Keepsake suggest some from the notes.</div></div><span></span></li>'}
+          </ul>
+          <form class="form" id="ideaForm">
+            <label for="ideaT">Add an idea</label>
+            <input id="ideaT" placeholder="e.g. Tickets to the Nala Sinephro gig at the Barbican" required>
+            <div class="two">
+              <div><label for="ideaType">Type</label><select id="ideaType"><option value="object">Object</option><option value="experience">Experience or place</option></select></div>
+              <div><label for="ideaP">Price</label><input id="ideaP" placeholder="£35"></div>
+            </div>
+            <div class="two">
+              <div><label for="ideaL">Link (optional)</label><input type="url" id="ideaL" placeholder="https://…"></div>
+              <div><label for="ideaF">Delivery</label><select id="ideaF"><option value="1">Within 48 hours</option><option value="0">Longer or n/a</option></select></div>
+            </div>
+            <div><button class="btn sun sm" type="submit">Save idea</button></div>
+          </form>
+        </div>
+      </div>
+
+      <div class="ai">
+        <h3>${p.isMe?'Treat yourself':'Suggest gifts for '+esc(p.name)}</h3>
+        <p>${p.isMe?'Reads your own notes and suggests something you would actually enjoy. Objects and experiences, mostly available in the UK within 48 hours.':'Reads the notes above and suggests a mix of objects and experiences, mostly available in the UK within 48 hours, with a reason for each.'}</p>
+        <div class="row">
+          <label>Occasion <select id="occ"><option>Birthday</option><option>Just because</option><option>Thank you</option><option>Celebration</option><option>Christmas</option><option>Cheer-up</option></select></label>
+          <label>Budget <select id="bud"><option value="20">under £20</option><option value="40" selected>under £40</option><option value="75">under £75</option><option value="150">under £150</option></select></label>
+          <button class="btn primary" id="suggest">✨ Suggest ideas</button>
+        </div>
+        <div class="status" id="status"></div>
+        <ul class="suggest" id="sugList"></ul>
+      </div>`;
+
+    $('#bud').value=String([20,40,75,150].reduce((a,b)=>Math.abs(b-(p.budget||40))<Math.abs(a-(p.budget||40))?b:a));
+    $('#edit').onclick=()=>openEdit(p);
+    $('#del').onclick=()=>{ if(confirm(`Remove ${p.name} and everything you've noted about them?`)){ state.people=state.people.filter(x=>x.id!==p.id); state.sel=state.people[0]?.id||null; save(); render(); } };
+    m.querySelectorAll('[data-tag]').forEach(b=>b.onclick=()=>b.classList.toggle('on'));
+    m.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{ideaFilter=b.dataset.filter; renderMain();});
+    m.querySelectorAll('[data-delnote]').forEach(b=>b.onclick=()=>{ p.notes=p.notes.filter(n=>n.id!==b.dataset.delnote); save(); renderMain(); });
+    m.querySelectorAll('[data-delidea]').forEach(b=>b.onclick=()=>{ p.ideas=p.ideas.filter(n=>n.id!==b.dataset.delidea); save(); renderMain(); });
+    m.querySelectorAll('[data-given]').forEach(b=>b.onclick=()=>{ const i=p.ideas.find(x=>x.id===b.dataset.given); i.given=true; i.givenOn=today(); save(); renderMain(); toast('Marked as given. It won\'t be suggested again.'); });
+    $('#noteForm').onsubmit=e=>{ e.preventDefault(); const tags=[...m.querySelectorAll('#noteTags .on')].map(b=>b.dataset.tag);
+      p.notes.unshift({id:uid(), d:$('#noteD').value||today(), t:$('#noteT').value.trim(), tags, img:$('#noteI').value.trim()}); p.example=false; save(); renderMain(); toast('Noted.'); };
+    $('#ideaForm').onsubmit=e=>{ e.preventDefault();
+      p.ideas.unshift({id:uid(), title:$('#ideaT').value.trim(), type:$('#ideaType').value, link:$('#ideaL').value.trim(), price:$('#ideaP').value.trim(), fast:$('#ideaF').value==='1', given:false, why:''}); save(); renderMain(); toast('Idea saved.'); };
+    $('#suggest').onclick=()=>suggest(p);
+    if(!sampleReady){ $('#suggest').disabled=true; $('#status').textContent=sampleChecked?'Suggestions need the claude.ai viewer. Open this page there to use them.':'Checking whether suggestions are available…'; }
+  }
+
+  function render(){ renderSide(); renderMain(); }
+
+  // ---- add / edit dialog
+  function dialogHTML(p){
+    return `<h2>${p?'Edit '+esc(p.name):'Add a person'}</h2>
+    <form id="pForm" class="form" style="border:none;padding:0">
+      <div class="two">
+        <div><label for="pName">Name</label><input id="pName" required value="${esc(p?.name||'')}"></div>
+        <div><label for="pRel">Relationship</label><input id="pRel" placeholder="Sister, best mate, colleague…" value="${esc(p?.rel||'')}"></div>
+      </div>
+      <label>Icon</label>
+      <div class="emojis" id="emojis">${EMOJIS.map(e=>`<button type="button" data-e="${e}" class="${(p?.emoji||'🌻')===e?'on':''}">${e}</button>`).join('')}</div>
+      <div class="two">
+        <div><label for="pBday">Birthday</label><input type="date" id="pBday" value="${esc(p?.birthday||'')}"></div>
+        <div><label for="pBud">Usual budget (£)</label><input type="number" id="pBud" min="5" step="5" value="${esc(p?.budget||40)}"></div>
+      </div>
+      <div class="two">
+        <div><label for="pInsta">Instagram handle</label><input id="pInsta" placeholder="@name" value="${esc(p?.insta||'')}"></div>
+        <div><label for="pSpot">Spotify profile link</label><input type="url" id="pSpot" placeholder="https://open.spotify.com/user/…" value="${esc(p?.spotify||'')}"></div>
+      </div>
+      <label><input type="checkbox" id="pMe" style="width:auto" ${p?.isMe?'checked':''}> This is me (unlocks "Treat yourself")</label>
+      <div class="dlgrow"><button type="button" class="btn ghost" id="pCancel">Cancel</button><button class="btn primary" type="submit">${p?'Save':'Add'}</button></div>
+    </form>`;
+  }
+  function openDialog(p){
+    const d=$('#dlg'); $('#dlgIn').innerHTML=dialogHTML(p); let emoji=p?.emoji||'🌻';
+    d.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{ d.querySelectorAll('[data-e]').forEach(x=>x.classList.remove('on')); b.classList.add('on'); emoji=b.dataset.e; });
+    $('#pCancel').onclick=()=>d.close();
+    $('#pForm').onsubmit=e=>{ e.preventDefault();
+      const data={name:$('#pName').value.trim(), rel:$('#pRel').value.trim()||'Friend', emoji, birthday:$('#pBday').value, budget:+$('#pBud').value||40, insta:$('#pInsta').value.trim(), spotify:$('#pSpot').value.trim(), isMe:$('#pMe').checked};
+      if(p){ Object.assign(p,data); p.example=false; } else { const np={id:uid(), notes:[], ideas:[], example:false, ...data}; state.people.push(np); state.sel=np.id; }
+      save(); d.close(); render(); toast(p?'Saved.':'Added.'); };
+    d.showModal();
+  }
+  const openAdd=()=>openDialog(null); const openEdit=p=>openDialog(p);
+  $('#btnAdd').onclick=openAdd;
+  $('#btnReset').onclick=()=>{ if(confirm('Replace everything with the example people?')){ state=seed(); state.sel=state.people[0].id; save(); render(); } };
+  $('#btnExport').onclick=async()=>{ try{ await navigator.clipboard.writeText(JSON.stringify(state)); toast('Backup copied. Paste it into a message to share.'); }catch(e){ prompt('Copy this text:', JSON.stringify(state)); } };
+  $('#btnImport').onclick=()=>{ const s=prompt('Paste a Keepsake backup:'); if(!s) return; try{ const o=JSON.parse(s); if(!Array.isArray(o.people)) throw 0; state=o; state.sel=state.people[0]?.id||null; save(); render(); toast('Restored.'); }catch(e){ alert('That didn\'t look like a Keepsake backup.'); } };
+
+  // ---- suggestions via the claude.ai viewer
+  let sample=null, sampleReady=false, sampleChecked=false;
+  (async()=>{
+    try{ if(window.claude && typeof window.claude.use==='function'){ sample=await window.claude.use('sample'); } }catch(e){ sample=null; }
+    sampleChecked=true; sampleReady=!!sample;
+    const b=$('#suggest'); if(b){ b.disabled=!sampleReady; } const s=$('#status'); if(s) s.textContent=sampleReady?'':'Suggestions need the claude.ai viewer. Open this page there to use them.';
+  })();
+
+  async function suggest(p){
+    if(!sample) return;
+    const occ=$('#occ').value, bud=$('#bud').value; const st=$('#status'); const list=$('#sugList'); const btn=$('#suggest');
+    btn.disabled=true; st.textContent='Thinking about '+(p.isMe?'you':p.name)+'…'; list.innerHTML='';
+    const notes=p.notes.map(n=>`- (${n.d}) ${n.t}${n.tags.length?' [tags: '+n.tags.join(', ')+']':''}`).join('\n')||'- (no notes yet)';
+    const given=p.ideas.filter(i=>i.given).map(i=>i.title).join('; ')||'none';
+    const open=p.ideas.filter(i=>!i.given).map(i=>i.title).join('; ')||'none';
+    const prompt=`You are a thoughtful, tasteful gift adviser in the UK. ${p.isMe?'The person is buying a small treat for themselves.':`The buyer is choosing a gift for ${p.name}, their ${p.rel}.`}
+Occasion: ${occ}. Budget: under £${bud}. Today: ${today()}.
+
+Everything the buyer has noted about ${p.isMe?'themselves':p.name} over time:
+${notes}
+
+Already given (never suggest these or near-duplicates): ${given}
+Already on their ideas list (do not repeat): ${open}
+
+Suggest exactly 6 ideas: 3 objects and 3 experiences or places (things to do, places to go, or something to pay for on their behalf). Each must connect to a specific note. Prefer things obtainable in the UK within 48 hours (named retailers, London venues, or bookable experiences). Be specific, not generic: name the actual thing.
+
+Respond with JSON only, in this exact shape:
+{"ideas":[{"title":"","type":"object|experience","why":"one sentence tying it to a note","price":"£xx","where":"retailer or venue, and how fast","fast":true}]}`;
+    try{
+      const out=await sample.json(prompt,{modelTier:'default'});
+      const ideas=(out&&out.ideas)||[];
+      if(!ideas.length) throw {code:'empty'};
+      st.textContent='';
+      list.innerHTML=ideas.map((i,k)=>`<li class="sug">
+        <div class="ti"><span class="kind ${i.type==='experience'?'experience':'object'}">${i.type==='experience'?'EXP':'OBJ'}</span>${esc(i.title)}</div>
+        <div class="why">${esc(i.why)}</div>
+        <div class="where">${esc(i.where||'')}${i.fast?'<span class="fast">48h</span>':''}</div>
+        <div class="foot"><b>${esc(i.price||'')}</b><button class="btn sm sun" data-save="${k}">Save idea</button></div></li>`).join('');
+      list.querySelectorAll('[data-save]').forEach(b=>b.onclick=()=>{ const i=ideas[+b.dataset.save];
+        p.ideas.unshift({id:uid(), title:i.title, type:i.type==='experience'?'experience':'object', link:'', price:i.price||'', fast:!!i.fast, given:false, why:i.why||''}); save(); b.textContent='Saved'; b.disabled=true; renderSide(); toast('Saved to ideas.'); });
+    }catch(e){
+      const c=e&&e.code;
+      st.textContent = c==='not_granted'?'Suggestions were declined for this page.' : c==='rate_limited'?'Too many requests just now. Try again in a minute.' : 'Couldn\'t get suggestions this time. Try again.';
+    }finally{ btn.disabled=!sampleReady; }
+  }
+
+  render();
+})();
+</script>
