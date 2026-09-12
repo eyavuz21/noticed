@@ -50,6 +50,7 @@ export default async function handler(req, res) {
     // Attach real links. Online: a product page from a retailer. In person: the shop's page, plus a maps link the page builds itself.
     if (enrich && Array.isArray(parsed.ideas) && provider()) {
       parsed.ideas = await Promise.all(parsed.ideas.slice(0, 8).map(async (idea) => {
+        if (idea.source === "stock" && idea.link) return { ...idea, url: idea.link, url_title: "From your stock" };
         let q, domains;
         if (mode === "instore") {
           q = `${idea.where || idea.title} ${area || ""} opening hours`.trim(); domains = null;

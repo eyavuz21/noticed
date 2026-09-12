@@ -173,6 +173,14 @@ dialog h2{font-size:24px; margin-bottom:12px}
 .auth .who{font-size:12.5px; font-weight:700; color:var(--muted)}
 .auth code{background:var(--soft); padding:2px 8px; border-radius:8px; font-weight:800; letter-spacing:.08em; color:var(--marigold)}
 #area{width:auto; min-width:200px}
+.strip{background:var(--card); border-bottom:1.5px solid var(--line)}
+.strip-in{max-width:1180px; margin:0 auto; padding:14px 24px; display:grid; grid-template-columns:repeat(3,1fr); gap:18px; font-size:13.5px; color:var(--muted)}
+.strip-in b{color:var(--ink); display:block; margin-bottom:2px}
+@media (max-width:860px){ .strip-in{grid-template-columns:1fr} }
+.stock-item{display:grid; grid-template-columns:1fr auto; gap:8px; padding:8px 0; border-top:1px solid var(--line); font-size:14px}
+.stock-item .t{font-weight:700} .stock-item .m{font-size:12.5px; color:var(--muted)}
+.src-tag{font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:2px 7px; border-radius:999px; margin-left:6px}
+.src-tag.stock{background:var(--pistachio); color:#0F2E20} .src-tag.web{background:var(--chip); color:var(--chip-ink)}
 .foot-note{font-size:13px; color:var(--muted); text-align:center; max-width:1180px; margin:0 auto; padding:0 24px 30px}
 .example-badge{font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); border:1.5px dashed var(--line); padding:2px 7px; border-radius:999px}
 .toast{position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--marigold); color:#1B1530; padding:10px 16px; border-radius:999px; font-weight:800; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:opacity .2s}
@@ -186,26 +194,34 @@ dialog h2{font-size:24px; margin-bottom:12px}
       <div class="bow" aria-hidden="true">N</div>
       <div>
         <h1><span class="w1">Notice</span><span class="w2">d</span></h1>
-        <small>The things you noticed about them, turned into the right gift.</small>
+        <small>Your team's client book. What your staff notice, kept by the store and turned into the right gift from your own stock.</small>
       </div>
     </div>
     <div class="actions">
       <span class="auth" id="auth"></span>
-      <button class="btn primary" id="btnAdd">+ Add a person</button>
+      <button class="btn primary" id="btnAdd">+ Add a client</button>
     </div>
   </div>
 </header>
 
+<section class="strip">
+  <div class="strip-in">
+    <div><b>Notes that stay with the store.</b> When a personal shopper leaves, the client book usually leaves with them. Here it doesn't.</div>
+    <div><b>Suggestions from your own stock first.</b> Paste your catalogue in once; every idea is something you can sell today, with the wider web as backup.</div>
+    <div><b>One workspace per store.</b> Everyone on the floor sees the same clients, notes and ideas. Invite a colleague with a code.</div>
+  </div>
+</section>
 <main class="app">
   <aside class="panel side">
-    <h2>Your people <span class="count" id="count"></span></h2>
+    <h2>Clients <span class="count" id="count"></span></h2>
     <ul class="people" id="people"></ul>
-    <button class="together" id="btnTogether"><span><b>Together</b><small>Group celebrations and team gifts</small></span><span aria-hidden="true">→</span></button>
+    <button class="together" id="btnTogether"><span><b>Together</b><small>Group events and one gift for a whole account</small></span><span aria-hidden="true">→</span></button>
+    <button class="together" id="btnStock"><span><b>Stock</b><small>Your catalogue, used first in every suggestion</small></span><span aria-hidden="true">→</span></button>
   </aside>
   <section class="panel main" id="main"></section>
 </main>
 
-<p class="foot-note">Everything you add stays on this device. Suggestions are generated on request from your notes and nothing else. Nothing is pulled from Instagram or anywhere else: what you know about someone, you add yourself. <button class="linkbtn" id="btnReset">Start again with the examples</button></p>
+<p class="foot-note">Noticed for retail. Sign in to keep the client book with the store. Suggestions are generated on request from your team's notes and your stock, nothing else. Nothing is pulled from social media: what you know about a client, your team noticed. <button class="linkbtn" id="btnReset">Start again with the examples</button></p>
 
 <dialog id="dlg"><div class="in" id="dlgIn"></div></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -220,28 +236,31 @@ dialog h2{font-size:24px; margin-bottom:12px}
   const uid=()=>Math.random().toString(36).slice(2,10);
 
   function seed(){
-    return {sel:null, people:[
-      {id:uid(), name:'Sarah', emoji:'🎨', rel:'Sister', birthday:'1995-11-03', insta:'sarah.makes', spotify:'', budget:40, country:'United Kingdom', example:true, isMe:false,
+    return {sel:null, catalogue:[
+      {id:uid(), title:'Hand-thrown stoneware mug, speckled', price:'£28', link:'https://example.com/stock/mug', tags:['home','art','ceramics']},
+      {id:uid(), title:'Linen apron, waxed straps', price:'£45', link:'https://example.com/stock/apron', tags:['home','art','fashion']},
+      {id:uid(), title:'Turkish coffee set, copper cezve and two cups', price:'£62', link:'https://example.com/stock/cezve', tags:['food & drink','home']},
+      {id:uid(), title:'Greenhouse thermometer, brass', price:'£34', link:'https://example.com/stock/thermo', tags:['plants','outdoors','home']},
+      {id:uid(), title:'Gift card, £50', price:'£50', link:'https://example.com/stock/giftcard', tags:['any']},
+      {id:uid(), title:'Ceramics workshop voucher, two hours', price:'£65', link:'https://example.com/stock/workshop', tags:['art','experience']}
+    ], people:[
+      {id:uid(), name:'Sarah Aldridge', emoji:'🎨', rel:'Personal shopping client', birthday:'1995-11-03', insta:'', spotify:'', budget:60, country:'United Kingdom', example:true, isMe:false,
         notes:[
-          {id:uid(), d:'2026-09-06', t:'Started a pottery evening class in Crouch End. Came back covered in slip and completely happy.', tags:['art'], img:''},
-          {id:uid(), d:'2026-08-24', t:'Said the V&A ceramics rooms were her favourite thing in London. Wants to go back with more time.', tags:['art','outdoors'], img:''},
-          {id:uid(), d:'2026-07-12', t:'Has been listening to a lot of Nala Sinephro and Alice Coltrane while working.', tags:['music'], img:''},
-          {id:uid(), d:'2026-06-30', t:'Reading Olive Kitteridge and keeps quoting it.', tags:['books'], img:''}
+          {id:uid(), d:'2026-09-06', t:'Mentioned she has started a pottery evening class. Came in for an apron; we had none in linen.', tags:['art','home'], img:''},
+          {id:uid(), d:'2026-08-24', t:'Loves the V&A ceramics rooms. Buys for her mother in November.', tags:['art'], img:''},
+          {id:uid(), d:'2026-07-12', t:'Prefers no fragrance. Husband is Tom, birthday in March.', tags:['pampering'], img:''}
         ],
-        ideas:[
-          {id:uid(), title:'Half-day wheel-throwing workshop, Skandihus', type:'experience', link:'', price:'£65', fast:true, given:false, why:'Extends the class she already loves'},
-          {id:uid(), title:'Studio apron in waxed cotton', type:'object', link:'', price:'£38', fast:true, given:true, givenOn:'2026-05-10', why:'Given for her last birthday'}
-        ]},
-      {id:uid(), name:'Dad', emoji:'🌿', rel:'Father', birthday:'1960-02-18', insta:'', spotify:'', budget:50, country:'Turkey', example:true, isMe:false,
+        ideas:[{id:uid(), title:'Linen apron, waxed straps', type:'object', link:'https://example.com/stock/apron', price:'£45', fast:true, given:true, givenOn:'2026-05-10', why:'Given for her birthday'}]},
+      {id:uid(), name:'Hawksmoor Group', emoji:'🍷', rel:'Corporate account · 14 people', birthday:'', insta:'', spotify:'', budget:40, country:'United Kingdom', example:true, isMe:false,
         notes:[
-          {id:uid(), d:'2026-09-01', t:'Spent the whole weekend on the tomatoes at the house in Bodrum. Wants a proper greenhouse thermometer.', tags:['plants','home'], img:''},
-          {id:uid(), d:'2026-08-15', t:'Mentioned missing Turkish coffee made properly, the kind with the foam.', tags:['food & drink'], img:''}
+          {id:uid(), d:'2026-09-01', t:'Christmas order for 14 staff, under £40 a head, nothing alcoholic this year. Decision by mid-October.', tags:['food & drink'], img:''},
+          {id:uid(), d:'2026-08-15', t:'Office manager Priya likes things with a story. Last year the candles went down well.', tags:['home'], img:''}
         ],
         ideas:[]},
-      {id:uid(), name:'Me', emoji:'🎹', rel:'That is you', birthday:'', insta:'', spotify:'', budget:30, country:'United Kingdom', example:true, isMe:true,
+      {id:uid(), name:'Mr Demir', emoji:'🌿', rel:'Regular · Saturdays', birthday:'1960-02-18', insta:'', spotify:'', budget:50, country:'United Kingdom', example:true, isMe:false,
         notes:[
-          {id:uid(), d:'2026-09-10', t:'Sang at the Proms. Still can\'t quite believe it. Want to mark it somehow.', tags:['music'], img:''},
-          {id:uid(), d:'2026-09-05', t:'Keep meaning to get back to running on the Heath early mornings.', tags:['sport','outdoors'], img:''}
+          {id:uid(), d:'2026-09-01', t:'Spends weekends on the tomatoes. Asked whether we do a proper greenhouse thermometer.', tags:['plants','home'], img:''},
+          {id:uid(), d:'2026-08-15', t:'Misses Turkish coffee made properly. Grew up in Bodrum.', tags:['food & drink'], img:''}
         ],
         ideas:[]}
     ]};
@@ -250,7 +269,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
   let save=function(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} };
   let state=load();
   if(!state.sel && state.people[0]) state.sel=state.people[0].id;
-  if(!state.view) state.view='person'; if(!Array.isArray(state.group)) state.group=[]; if(!state.gmode) state.gmode='celebrate'; if(!state.mode) state.mode='online'; if(state.area===undefined) state.area='';
+  if(!state.view) state.view='person'; if(!Array.isArray(state.group)) state.group=[]; if(!state.gmode) state.gmode='celebrate'; if(!state.mode) state.mode='online'; if(state.area===undefined) state.area=''; if(!Array.isArray(state.catalogue)) state.catalogue=[];
 
   const $=s=>document.querySelector(s);
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -291,7 +310,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
 
   function renderSide(){
     const ul=$('#people'); ul.innerHTML='';
-    $('#count').textContent=state.people.length+(state.people.length===1?' person':' people');
+    $('#count').textContent=state.people.length+(state.people.length===1?' client':' clients');
     const sorted=[...state.people].sort((a,b)=>{const da=daysToBirthday(a.birthday)??999, db=daysToBirthday(b.birthday)??999; return da-db;});
     for(const p of sorted){
       const li=document.createElement('li'); const b=document.createElement('button'); const acc=ACCENTS[state.people.indexOf(p)%ACCENTS.length];
@@ -307,7 +326,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
   let ideaFilter='all';
   function renderMain(){
     const m=$('#main'); const p=person();
-    if(!p){ m.innerHTML=`<div class="empty"><h2>No one here yet</h2><p>Add the people you buy for most. Then jot down what you learn about them as you go, and Noticed turns it into gift ideas when an occasion comes round.</p><p><button class="btn primary" id="emptyAdd">+ Add a person</button></p></div>`; $('#emptyAdd').onclick=openAdd; return; }
+    if(!p){ m.innerHTML=`<div class="empty"><h2>No clients yet</h2><p>Add a client, then jot down what your team notices about them. When an occasion comes round, Noticed turns it into gift ideas from your own stock first.</p><p><button class="btn primary" id="emptyAdd">+ Add a client</button></p></div>`; $('#emptyAdd').onclick=openAdd; return; }
     const dd=daysToBirthday(p.birthday); const acc=ACCENTS[state.people.indexOf(p)%ACCENTS.length]; m.style.setProperty('--acc',`var(--${acc})`);
     const meta=[];
     if(p.birthday) meta.push(`<span>🎂 ${fmt(p.birthday)}${dd!==null?` <b class="tabular">(${dd===0?'today':'in '+dd+' days'})</b>`:''}</span>`);
@@ -328,13 +347,13 @@ dialog h2{font-size:24px; margin-bottom:12px}
 
       <div class="sections">
         <div class="sec">
-          <h3>What you've learnt <span class="hint tabular">${p.notes.length} notes</span></h3>
+          <h3>What the team has noticed <span class="hint tabular">${p.notes.length} notes</span></h3>
           <ul class="log" id="log">${p.notes.length?p.notes.map(n=>`
             <li class="note"><div class="d">${esc(fmt(n.d))}</div><div class="t">${esc(n.t)}</div>${n.img?`<img src="${esc(n.img)}" alt="">`:''}<div class="tags">${n.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}<button class="tagbtn" data-delnote="${n.id}" title="Delete note" aria-label="Delete note">×</button></div></li>`).join(''):'<li class="note"><div class="t">Nothing yet. The first note is usually something they said in passing.</div></li>'}
           </ul>
           <form class="form" id="noteForm">
             <label for="noteT">Add a note</label>
-            <textarea id="noteT" placeholder="e.g. Said she'd love to try a proper omakase. Hates surprises on the day itself." required></textarea>
+            <textarea id="noteT" placeholder="e.g. Asked for the cashmere in navy, not black. Daughter starts at Bristol in September." required></textarea>
             <div class="two"><div><label for="noteD">Date</label><input type="date" id="noteD" value="${today()}"></div><div><label for="noteI">Image link (optional)</label><input type="url" id="noteI" placeholder="https://…"></div></div>
             <div class="tags" id="noteTags">${TAGS.map(t=>`<button type="button" class="tagbtn" data-tag="${esc(t)}">${esc(t)}</button>`).join('')}</div>
             <div><button class="btn sun sm" type="submit">Save note</button></div>
@@ -370,8 +389,8 @@ dialog h2{font-size:24px; margin-bottom:12px}
       </div>
 
       <div class="ai">
-        <h3>${p.isMe?'Treat yourself':'Suggest gifts for '+esc(p.name)}</h3>
-        <p>${p.isMe?'Reads your own notes and suggests something you would actually enjoy.':'Reads the notes above and suggests a mix of objects and experiences with a reason for each.'} ${state.mode==='instore'?'In-person mode: shops you can walk into today and things you can book for tonight.':'Online mode: things that can be delivered, with a link to buy.'}</p>
+        <h3>Suggest for ${esc(p.name)}</h3>
+        <p>Reads the notes above and suggests from <b>your stock first</b>${state.catalogue.length?` (${state.catalogue.length} items loaded)`:' (no catalogue loaded yet, so everything will come from the wider web)'}, with a reason for each. ${state.mode==='instore'?'In-person mode: things to hand over today.':'Online mode: things to send, with a link.'}</p>
         <div class="row">${modeControl('p')}</div>
         <div class="row">
           <label>Occasion <select id="occ"><option>Birthday</option><option>Just because</option><option>Thank you</option><option>Celebration</option><option>Christmas</option><option>Cheer-up</option></select></label>
@@ -412,15 +431,15 @@ dialog h2{font-size:24px; margin-bottom:12px}
     setReady();
   }
 
-  function render(){ renderSide(); const tb=$('#btnTogether'); tb.classList.toggle('active', state.view==='group'); tb.onclick=()=>{state.view='group'; save(); render();}; if(state.view==='group') renderGroup(); else renderMain(); }
+  function render(){ renderSide(); const tb=$('#btnTogether'); tb.classList.toggle('active', state.view==='group'); tb.onclick=()=>{state.view='group'; save(); render();}; const sb2=$('#btnStock'); sb2.classList.toggle('active', state.view==='stock'); sb2.onclick=()=>{state.view='stock'; save(); render();}; if(state.view==='group') renderGroup(); else if(state.view==='stock') renderStock(); else renderMain(); }
 
   // ---- add / edit dialog
   function dialogHTML(p){
-    return `<h2>${p?'Edit '+esc(p.name):'Add a person'}</h2>
+    return `<h2>${p?'Edit '+esc(p.name):'Add a client'}</h2>
     <form id="pForm" class="form" style="border:none;padding:0">
       <div class="two">
         <div><label for="pName">Name</label><input id="pName" required value="${esc(p?.name||'')}"></div>
-        <div><label for="pRel">Relationship</label><input id="pRel" placeholder="Sister, best mate, colleague…" value="${esc(p?.rel||'')}"></div>
+        <div><label for="pRel">Account type</label><input id="pRel" placeholder="Personal shopping client, corporate account, regular…" value="${esc(p?.rel||'')}"></div>
       </div>
       <label>Icon</label>
       <div class="emojis" id="emojis">${EMOJIS.map(e=>`<button type="button" data-e="${e}" class="${(p?.emoji||'🌻')===e?'on':''}">${e}</button>`).join('')}</div>
@@ -433,7 +452,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
         <div><label for="pInsta">Instagram handle</label><input id="pInsta" placeholder="@name" value="${esc(p?.insta||'')}"></div>
         <div><label for="pSpot">Spotify profile link</label><input type="url" id="pSpot" placeholder="https://open.spotify.com/user/…" value="${esc(p?.spotify||'')}"></div>
       </div>
-      <label><input type="checkbox" id="pMe" style="width:auto" ${p?.isMe?'checked':''}> This is me (unlocks "Treat yourself")</label>
+      <label hidden><input type="checkbox" id="pMe" style="width:auto" ${p?.isMe?'checked':''}> This is me</label>
       <div class="dlgrow"><button type="button" class="btn ghost" id="pCancel">Cancel</button><button class="btn primary" type="submit">${p?'Save':'Add'}</button></div>
     </form>`;
   }
@@ -442,7 +461,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
     d.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{ d.querySelectorAll('[data-e]').forEach(x=>x.classList.remove('on')); b.classList.add('on'); emoji=b.dataset.e; });
     $('#pCancel').onclick=()=>d.close();
     $('#pForm').onsubmit=e=>{ e.preventDefault();
-      const data={name:$('#pName').value.trim(), rel:$('#pRel').value.trim()||'Friend', emoji, birthday:$('#pBday').value, country:$('#pCountry').value.trim()||'United Kingdom', budget:+$('#pBud').value||40, insta:$('#pInsta').value.trim(), spotify:$('#pSpot').value.trim(), isMe:$('#pMe').checked};
+      const data={name:$('#pName').value.trim(), rel:$('#pRel').value.trim()||'Client', emoji, birthday:$('#pBday').value, country:$('#pCountry').value.trim()||'United Kingdom', budget:+$('#pBud').value||40, insta:$('#pInsta').value.trim(), spotify:$('#pSpot').value.trim(), isMe:$('#pMe').checked};
       if(p){ Object.assign(p,data); p.example=false; } else { const np={id:uid(), notes:[], ideas:[], example:false, ...data}; state.people.push(np); state.sel=np.id; }
       save(); d.close(); render(); toast(p?'Saved.':'Added.'); };
     d.showModal();
@@ -452,7 +471,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
   $('#btnReset').onclick=()=>{ if(confirm('Replace everything with the example people?')){ state=seed(); state.sel=state.people[0].id; save(); render(); } };
 
   // ---- one way to ask: the claude.ai viewer when the page runs there, otherwise our own /api/suggest
-  const SCHEMA_IDEAS={type:'object',properties:{ideas:{type:'array',items:{type:'object',properties:{title:{type:'string'},type:{type:'string',enum:['object','experience']},why:{type:'string'},suits:{type:'string'},price:{type:'string'},where:{type:'string'},fast:{type:'boolean'}},required:['title','type','why','price','where','fast'],additionalProperties:false}}},required:['ideas'],additionalProperties:false};
+  const SCHEMA_IDEAS={type:'object',properties:{ideas:{type:'array',items:{type:'object',properties:{title:{type:'string'},type:{type:'string',enum:['object','experience']},why:{type:'string'},suits:{type:'string'},price:{type:'string'},where:{type:'string'},fast:{type:'boolean'},source:{type:'string',enum:['stock','web']},link:{type:'string'}},required:['title','type','why','price','where','fast','source','link'],additionalProperties:false}}},required:['ideas'],additionalProperties:false};
   const SCHEMA_MSGS={type:'object',properties:{messages:{type:'array',items:{type:'object',properties:{label:{type:'string'},text:{type:'string'}},required:['label','text'],additionalProperties:false}}},required:['messages'],additionalProperties:false};
   let sample=null, sampleReady=false, sampleChecked=false, serverReady=false;
   async function ask(prompt, schema, extra={}){
@@ -484,7 +503,8 @@ dialog h2{font-size:24px; margin-bottom:12px}
     const given=p.ideas.filter(i=>i.given).map(i=>i.title).join('; ')||'none';
     const open=p.ideas.filter(i=>!i.given).map(i=>i.title).join('; ')||'none';
     const where=p.country||'United Kingdom'; const abroad=where!=='United Kingdom';
-    const prompt=`You are a thoughtful, tasteful gift adviser. ${p.isMe?'The person is buying a small treat for themselves.':`The buyer, who is in the UK, is choosing a gift for ${p.name}, their ${p.rel}.`} ${p.isMe?`They live in ${where}.`:`${p.name} lives in ${where}.`}
+    const stock=stockFor(p);
+    const prompt=`You are a thoughtful, tasteful gift adviser working for a shop. ${p.isMe?'The person is buying a small treat for themselves.':`The buyer, who is in the UK, is choosing a gift for ${p.name}, their ${p.rel}.`} ${p.isMe?`They live in ${where}.`:`${p.name} lives in ${where}.`}
 Occasion: ${occ}. Budget: under £${bud} (or the equivalent in local currency). Today: ${today()}.
 
 Everything the buyer has noted about ${p.isMe?'themselves':p.name} over time:
@@ -496,14 +516,15 @@ Already on their ideas list (do not repeat): ${open}
 ${state.mode==='instore'?`THE BUYER NEEDS THIS TODAY, IN PERSON${state.area?', near '+state.area:''}. Suggest exactly 6 ideas: 4 objects available to walk in and buy today from named shops (chains or well-known independents${state.area?' near '+state.area:''}: give the shop name and the street or area in "where"), and 2 experiences bookable for today or tonight. Each must connect to a specific note.`:`Suggest exactly 6 ideas: 3 objects and 3 experiences or places (things to do, places to go, or something to pay for on their behalf). Each must connect to a specific note.`} ${abroad?`Everything must be deliverable to, or happen in, ${where}: use retailers that ship there or local ones, name local venues and experiences near where they live, and give prices in local currency with a rough £ equivalent.`:'Prefer things obtainable in the UK within 48 hours (named retailers, London venues, or bookable experiences).'} Be specific, not generic: name the actual thing.
 
 Respond with JSON only, in this exact shape:
-{"ideas":[{"title":"","type":"object|experience","why":"one sentence tying it to a note","price":"£xx","where":"retailer or venue, and how fast","fast":true}]}`;
+{"ideas":[{"title":"","type":"object|experience","why":"one sentence tying it to a note","price":"£xx","where":"our stock, or retailer or venue and how fast","fast":true,"source":"stock|web","link":"exact link for stock items, empty for web"}]}`;
     try{
       const out=await ask(prompt, SCHEMA_IDEAS, {enrich:true, mode:state.mode, area:state.area, country:where});
       const ideas=(out&&out.ideas)||[];
       if(!ideas.length) throw {code:'empty'};
       st.textContent=out.search?'':'';
+      ideas.forEach(i=>{ if(i.source==='stock'&&i.link&&!i.url) i.url=i.link; });
       list.innerHTML=ideas.map((i,k)=>`<li class="sug">
-        <div class="ti"><span class="kind ${i.type==='experience'?'experience':'object'}">${i.type==='experience'?'EXP':'OBJ'}</span>${esc(i.title)}</div>
+        <div class="ti"><span class="kind ${i.type==='experience'?'experience':'object'}">${i.type==='experience'?'EXP':'OBJ'}</span>${esc(i.title)}<span class="src-tag ${i.source==='stock'?'stock':'web'}">${i.source==='stock'?'Your stock':'Wider web'}</span></div>
         <div class="why">${esc(i.why)}</div>
         <div class="where">${esc(i.where||'')}${i.fast?'<span class="fast">48h</span>':''}</div>${linksFor(i,state.mode,state.area,where)}
         <div class="foot"><b>${esc(i.price||'')}</b><button class="btn sm sun" data-save="${k}">Save idea</button></div></li>`).join('');
@@ -516,6 +537,42 @@ Respond with JSON only, in this exact shape:
   }
 
 
+  // ---- Stock: the store's catalogue, matched to a client's notes by tag and keyword overlap
+  function stockFor(p){
+    const text=(p.notes.map(n=>n.t+' '+n.tags.join(' ')).join(' ')).toLowerCase();
+    const scored=state.catalogue.map(c=>{ let sc=0; for(const t of c.tags){ if(text.includes(t.toLowerCase())) sc+=2; if(t==='any') sc+=0.5; } for(const w of c.title.toLowerCase().split(/\W+/)){ if(w.length>3&&text.includes(w)) sc+=1; } return [sc,c]; });
+    return scored.sort((a,b)=>b[0]-a[0]).slice(0,40).map(x=>x[1]);
+  }
+  function parseStock(txt){
+    return txt.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{ const [title,price,link,tags]=l.split('|').map(x=>(x||'').trim()); if(!title) return null; return {id:uid(), title, price:price||'', link:link||'', tags:(tags||'').split(',').map(t=>t.trim().toLowerCase()).filter(Boolean)}; }).filter(Boolean);
+  }
+  function renderStock(){
+    const m=$('#main'); m.style.removeProperty('--acc');
+    m.innerHTML=`
+      <div class="profile" style="grid-template-columns:1fr auto; border-color:var(--pistachio)">
+        <div><h2>Stock</h2><div class="meta"><span>Your catalogue. Every suggestion is drawn from here first, then the wider web.</span></div></div>
+        <span class="pill">${state.catalogue.length} items</span>
+      </div>
+      <div class="sections">
+        <div class="sec">
+          <h3>Add items <span class="hint">one per line</span></h3>
+          <form class="form" id="stockForm">
+            <label for="stockText">Title | price | link | tags</label>
+            <textarea id="stockText" style="min-height:150px" placeholder="Cashmere scarf, navy | £95 | https://yourshop.com/scarf | fashion, winter&#10;Ceramics workshop voucher | £65 | https://yourshop.com/workshop | art, experience"></textarea>
+            <div class="row"><button class="btn sun sm" type="submit">Add to stock</button><button class="btn ghost sm" type="button" id="stockClear">Clear all</button></div>
+            <p class="small">Paste straight from a spreadsheet export. Tags are what match items to notes: use the same words your team uses in notes (art, food &amp; drink, plants, fashion, kids…). "any" fits everyone.</p>
+          </form>
+        </div>
+        <div class="sec">
+          <h3>In stock <span class="hint tabular">${state.catalogue.length}</span></h3>
+          <div id="stockList">${state.catalogue.length?state.catalogue.map(c=>`<div class="stock-item"><div><div class="t">${c.link?`<a href="${esc(c.link)}" target="_blank" rel="noopener">${esc(c.title)}</a>`:esc(c.title)}</div><div class="m">${esc(c.price)} · ${c.tags.map(esc).join(', ')||'no tags'}</div></div><button class="btn sm ghost" data-delstock="${c.id}" aria-label="Remove">×</button></div>`).join(''):'<div class="small">Nothing yet. Add items on the left, or use the examples by choosing "Start again with the examples" at the bottom of the page.</div>'}</div>
+        </div>
+      </div>`;
+    $('#stockForm').onsubmit=e=>{ e.preventDefault(); const items=parseStock($('#stockText').value); if(!items.length) return; state.catalogue.push(...items); save(); renderStock(); toast(items.length+' added to stock.'); };
+    $('#stockClear').onclick=()=>{ if(confirm('Remove every item from stock?')){ state.catalogue=[]; save(); renderStock(); } };
+    m.querySelectorAll('[data-delstock]').forEach(b=>b.onclick=()=>{ state.catalogue=state.catalogue.filter(c=>c.id!==b.dataset.delstock); save(); renderStock(); });
+  }
+
   // ---- Together: group celebrations and team gifts
   function notesFor(p){ return p.notes.map(n=>`  - (${n.d}) ${n.t}${n.tags.length?' [tags: '+n.tags.join(', ')+']':''}`).join('\n')||'  - (no notes yet)'; }
   function renderGroup(){
@@ -524,13 +581,13 @@ Respond with JSON only, in this exact shape:
     const team=state.gmode==='team';
     m.innerHTML=`
       <div class="profile" style="grid-template-columns:1fr auto; border-color:var(--cornflower)">
-        <div><h2>Together</h2><div class="meta"><span>Pick two or more people, then choose what you're planning.</span></div></div>
+        <div><h2>Together</h2><div class="meta"><span>Pick two or more clients, or everyone on an account, then choose what you're planning.</span></div></div>
         <span></span>
       </div>
       <div class="picks" id="picks">${state.people.length?state.people.map((p,i)=>`<button class="pick ${state.group.includes(p.id)?'on':''}" data-pick="${p.id}" aria-pressed="${state.group.includes(p.id)}"><span class="avatar" style="background:var(--${ACCENTS[i%ACCENTS.length]})" aria-hidden="true">${esc(p.emoji)}</span>${esc(p.name)}</button>`).join(''):'<span class="hint">Add some people first.</span>'}</div>
       <div class="modes">
         <button class="mode ${!team?'on':''}" data-mode="celebrate"><b>Celebrate together</b><small>Places to go and things to do that suit everyone you've picked, based on all their notes.</small></button>
-        <button class="mode ${team?'on':''}" data-mode="team"><b>One gift for the whole team</b><small>The same small thing for every person, chosen so it lands with all of them. Good for the workplace.</small></button>
+        <button class="mode ${team?'on':''}" data-mode="team"><b>One gift for a whole account</b><small>The same thing for every person on a corporate order, chosen so it lands with all of them.</small></button>
       </div>
       <div class="ai">
         <h3>${team?'Suggest one gift for everyone':'Suggest ways to celebrate together'}</h3>
@@ -632,20 +689,20 @@ Respond with JSON only: {"messages":[{"label":"three-word label","text":"the mes
     const el=$('#auth'); if(!el) return;
     if(!sb){ el.innerHTML=''; return; }
     if(!sbUser){ el.innerHTML='<button class="btn sm ghost" id="signin">Sign in</button>'; $('#signin').onclick=signInDialog; return; }
-    el.innerHTML=`<span class="who">${esc(sbUser.email)}</span> <button class="btn sm ghost" id="share">Share</button> <button class="btn sm ghost" id="signout">Sign out</button>`;
+    el.innerHTML=`<span class="who">${esc(sbUser.email)}</span> <button class="btn sm ghost" id="share">Team</button> <button class="btn sm ghost" id="signout">Sign out</button>`;
     $('#share').onclick=shareDialog;
-    $('#signout').onclick=async()=>{ await sb.auth.signOut(); sbUser=null; sbCode=null; renderAuth(); toast('Signed out. Your notes stay on this device.'); };
+    $('#signout').onclick=async()=>{ await sb.auth.signOut(); sbUser=null; sbCode=null; renderAuth(); toast('Signed out. Notes stay on this device.'); };
   }
   function shareDialog(){
-    const d=$('#dlg'); $('#dlgIn').innerHTML=`<h2>Share your people</h2>
-      <p class="small" style="margin-bottom:10px">Give this code to someone and you'll both see the same people, notes and ideas. Good for a partner, a sibling, or a team.</p>
+    const d=$('#dlg'); $('#dlgIn').innerHTML=`<h2>Your store's workspace</h2>
+      <p class="small" style="margin-bottom:10px">Give this code to a colleague and they join your store: same clients, notes, ideas and stock. One workspace per store.</p>
       <p style="text-align:center;margin:14px 0"><code style="font-size:28px;letter-spacing:.25em;padding:10px 18px;border-radius:12px;background:var(--soft);color:var(--marigold)">${esc(sbCode||'…')}</code></p>
       <div class="dlgrow" style="justify-content:center;margin-top:0"><button class="btn sm sun" id="copyCode">Copy code</button></div>
       <hr style="border:none;border-top:1.5px dashed var(--line);margin:18px 0">
       <form id="joinForm" class="form" style="border:none;padding:0">
-        <label for="joinCode">Have someone's code? Join theirs</label>
+        <label for="joinCode">Joining a colleague's store? Enter their code</label>
         <input id="joinCode" placeholder="e.g. A3F9C2" maxlength="6" style="text-transform:uppercase;letter-spacing:.2em">
-        <p class="small">Joining replaces the people on this account with theirs, so copy anything you want to keep first.</p>
+        <p class="small">Joining replaces the clients on this account with the store's, so add anything you want to keep afterwards.</p>
         <div class="dlgrow"><button type="button" class="btn ghost" id="shareClose">Close</button><button class="btn primary" type="submit">Join</button></div>
       </form>`;
     $('#copyCode').onclick=async()=>{ try{ await navigator.clipboard.writeText(sbCode||''); toast('Code copied.'); }catch(e){ prompt('Copy this code:', sbCode||''); } };
@@ -655,7 +712,7 @@ Respond with JSON only: {"messages":[{"label":"three-word label","text":"the mes
     d.showModal();
   }
   function signInDialog(){
-    const d=$('#dlg'); $('#dlgIn').innerHTML=`<h2>Sign in</h2><p class="small" style="margin-bottom:10px">We email you a link. No password. Signing in keeps your people safe if you clear this browser, and lets you share them with someone.</p>
+    const d=$('#dlg'); $('#dlgIn').innerHTML=`<h2>Sign in</h2><p class="small" style="margin-bottom:10px">We email you a link. No password. Signing in keeps the client book safe if you clear this browser, and lets your colleagues work from the same one.</p>
       <form id="siForm" class="form" style="border:none;padding:0"><label for="siEmail">Email</label><input type="email" id="siEmail" required placeholder="you@example.com"><div class="dlgrow"><button type="button" class="btn ghost" id="siCancel">Cancel</button><button class="btn primary" type="submit">Email me a link</button></div></form>`;
     $('#siCancel').onclick=()=>d.close();
     $('#siForm').onsubmit=async e=>{ e.preventDefault(); const email=$('#siEmail').value.trim();

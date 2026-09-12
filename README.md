@@ -1,82 +1,56 @@
-# Noticed
+# Noticed for retail
 
-A private log of what you learn about the people you love, turned into gift ideas when an occasion comes round.
+The client book your staff actually keep, kept by the store.
 
-**Live site:** https://noticedapp.vercel.app
+**Live:** https://noticedapp.vercel.app
 
-## The idea
+## The problem
 
-Most gifting apps start from the shop. Noticed starts from the person. You keep a short, private record of the things people tell you in passing (she's started pottery, he misses proper Turkish coffee, she keeps quoting *Olive Kitteridge*), and when a birthday comes round the app reads those notes and suggests gifts that actually connect to them: objects, experiences, places to go, or something to pay for on their behalf. Mostly things you can get in the UK within 48 hours.
+In any shop with regulars, the valuable knowledge is what the floor staff notice: she's started pottery, he grew up in Bodrum and misses proper coffee, the corporate account wants nothing alcoholic this year. It lives in heads and notebooks, and when a personal shopper leaves, the client book leaves with them. Enterprise clienteling software exists for department stores, on eighteen-month contracts. Nothing exists for the boutique, the concierge, the members' club or the independent with two thousand regulars.
 
-The longer you use it, the better it gets, and the harder it is to leave. The notes are the product.
+## What it does
 
-## What the MVP does (v0.4)
+- **Clients**, each with an account type, birthday, budget, and where they live
+- **What the team has noticed**: dated, tagged notes anyone on the floor can add
+- **Stock**: paste your catalogue in once (title, price, link, tags). Every suggestion is drawn from your own stock first, marked "Your stock", with the wider web as backup, marked "Wider web"
+- **Suggest**: reads the notes and returns six ideas with a reason each, by occasion and budget. Online mode attaches a link to buy or send; in-person mode picks things to hand over today
+- **Together**: one gift for a whole corporate account, chosen to land with all fourteen people, or ideas for an event
+- **Write a message**: three card messages in a chosen tone, from the notes
+- **One workspace per store**: email sign-in, and a six-character code that brings a colleague into the same clients, notes, ideas and stock
 
-- **People**: the handful of people you buy for most, each with an icon, relationship, birthday, usual budget, where they live (any country: suggestions use local retailers, local venues and local currency), Instagram handle and Spotify link
-- **What you've learnt**: dated notes with tags and an optional image, one per thing you noticed
-- **Gift ideas**: a running list per person, objects and experiences, with a 48h flag, and a "Given" button so nothing is repeated
-- **Suggest ideas**: reads the notes and returns 3 objects and 3 experiences with a reason for each, filtered by occasion and budget
-- **Online delivery / In person today**: online mode attaches a real product page to each idea (via LinkUp or Tavily) plus retailer search links; in-person mode takes an area, suggests named shops you can walk into today and things bookable tonight, with a Directions & hours link for each
-- **Sign in and share** (when Supabase is configured): email magic link, no password; your people are stored server-side and a six-character household code lets two people share one set of notes
-- **Treat yourself**: mark a profile as you, and it suggests things for you instead
-- **Together**: pick several people and either get places and things to do that suit the whole group, or one small gift to buy identically for every member of a team (workplace-friendly, budget per head)
-- **Write a message**: three short card messages for a person or a group, in a chosen tone, drawn from the notes, with one-click copy
+## Who it's for
 
-Data lives in the browser (localStorage). Nothing is pulled from Instagram or any other service: what you know about someone, you add yourself.
+Boutiques and independents with regulars. Concierge and gifting agencies. Private members' clubs and boutique hotels' guest relations. Executive assistants and account managers who buy for a list of people they have to remember things about. Later: department-store personal shopping, where the incumbent is enterprise clienteling and the pitch is "your shoppers' notes stay with the store".
+
+## Pricing (proposed)
+
+£29 per seat per month, or £199 a month per store for up to ten seats. Free for a single user with up to twenty clients, so a personal shopper can bring it in before the store buys it.
 
 ## Stack
 
-- `index.html`: the whole app. No build step, no framework, two Google Fonts.
-- `api/suggest.js`: one Vercel serverless function. The page posts a prompt and the JSON shape it expects; the function calls Claude (`claude-opus-5`, structured JSON output, effort `medium`, server-side refusal fallbacks), then attaches a real link to each idea using `api/_search.js`.
-- `api/_search.js`: one search interface, two providers. LinkUp (official SDK) or Tavily (REST), chosen by whichever key is set, `SEARCH_PROVIDER` to force one. Never throws: no link is not an error.
-- `api/config.js`: hands the page its public Supabase config, if any.
-- `supabase/schema.sql`: households, members, one JSON state document per household, row-level security, and three RPCs (`ensure_household`, `join_household`, `save_state`).
-
-## Running it locally
-
-Open `index.html` in a browser for everything except suggestions. For the full thing:
-
-```
-npm install
-npx vercel dev
-```
-
-and put `ANTHROPIC_API_KEY=...` in a `.env` file (gitignored).
+- `index.html`: the whole app. No build step.
+- `api/suggest.js`: calls Claude with structured JSON output, then attaches real links via `api/_search.js` (LinkUp or Tavily, whichever key is set). Stock items keep their own links and skip the search.
+- `api/config.js`: hands the page its public Supabase config.
+- `supabase/schema.sql`: workspaces (one per store), members, one JSON state document per workspace holding clients, notes, ideas and stock, row-level security, RPCs.
 
 ## Deploying
 
-The repo is connected to Vercel: every push to `main` deploys to https://noticedapp.vercel.app automatically.
+The repo is connected to Vercel: every push to `main` deploys automatically.
 
-Environment variables (Vercel → Settings → Environment Variables):
-
-| Name | Required | What |
+| Variable | Required | What |
 |---|---|---|
 | `ANTHROPIC_API_KEY` | yes | Suggestions and messages |
-| `LINKUP_API_KEY` or `TAVILY_API_KEY` | for links | Real product and shop links. Set one; `SEARCH_PROVIDER=linkup|tavily` forces a choice if both exist |
-| `SUPABASE_URL`, `SUPABASE_ANON_KEY` | for sign-in | From Supabase → Project Settings → API. The anon key is public by design; row-level security protects the data |
+| `LINKUP_API_KEY` or `TAVILY_API_KEY` | for links | Real product and shop links; `SEARCH_PROVIDER` forces one |
+| `SUPABASE_URL`, `SUPABASE_ANON_KEY` | for sign-in | Project Settings → API. The anon key is public by design |
 
-### Setting up sign-in (about five minutes)
+Supabase setup: create a project, run `supabase/schema.sql` then `supabase/patch-2026-09-12.sql` in the SQL editor, set the Site URL and Redirect URLs under Authentication to the live address, add the two variables to Vercel. The built-in email sender is rate-limited; add custom SMTP (Resend) before launch.
 
-1. Create a free project at supabase.com. Any region; London is fine.
-2. SQL Editor → paste `supabase/schema.sql` → Run.
-3. Authentication → URL Configuration → Site URL `https://noticedapp.vercel.app`, and add it to Redirect URLs.
-4. Copy the Project URL and anon key into Vercel as `SUPABASE_URL` and `SUPABASE_ANON_KEY`, then redeploy.
+## Status
 
-Supabase's built-in email sender is rate-limited to a handful of messages an hour, which is fine for the two of us and not for launch. Before launch, add a custom SMTP provider (Resend's free tier is enough) under Authentication → SMTP.
+Parked, 13 September 2026, in favour of the practice app. Kept as the B2B backdrop: the product works end to end, and the first customer conversation is a boutique or concierge with a list of regulars and no system.
 
-## Roadmap
+## History
 
-See the planning doc for the full picture. In order:
+Started 12 September 2026 as a consumer gifting app (Keepsake, then Wrapid, then Giftlore, then Noticed), repositioned for retail the same day once it was clear the people who pay for remembering clients are businesses.
 
-1. **v0.5**: buy links with affiliate tracking; occasion reminders by email; add a note from a shared screenshot or voice note
-2. **v0.6**: Spotify and Goodreads read-only connections, with the person's permission
-3. **Later, only once there are users**: reward points and tiers, sending points to someone who has to sign up to use them, a community feed and messaging, self-gift suggestions as a standalone feature
-
-## Not doing
-
-- Scraping Instagram or any social profile. It breaks Meta's terms and GDPR, and it isn't needed: the notes you write yourself are better data than a feed
-- Holding stock or running delivery. Fast delivery comes from retailers who already do it
-
-## Founders
-
-Emre Yavuz and his sister. September 2026. The name: the whole product is noticing things about people, and "she noticed" is the feeling a good gift gives.
+Emre Yavuz and Melisande Yavuz.
