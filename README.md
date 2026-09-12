@@ -2,7 +2,7 @@
 
 A private log of what you learn about the people you love, turned into gift ideas when an occasion comes round.
 
-**Live site:** https://noticed-app.vercel.app
+**Live site:** https://noticedapp.vercel.app
 **Also on claude.ai:** https://claude.ai/code/artifact/80e302cc-ce64-4454-ba60-b2415c5bff33
 
 ## The idea
@@ -48,7 +48,7 @@ and put `ANTHROPIC_API_KEY=...` in a `.env` file (gitignored).
 
 ## Deploying
 
-The repo is connected to Vercel: every push to `main` deploys to https://noticed-app.vercel.app automatically.
+The repo is connected to Vercel: every push to `main` deploys to https://noticedapp.vercel.app automatically.
 
 Environment variables (Vercel → Settings → Environment Variables):
 
@@ -62,7 +62,7 @@ Environment variables (Vercel → Settings → Environment Variables):
 
 1. Create a free project at supabase.com. Any region; London is fine.
 2. SQL Editor → paste `supabase/schema.sql` → Run.
-3. Authentication → URL Configuration → Site URL `https://noticed-app.vercel.app`, and add it to Redirect URLs.
+3. Authentication → URL Configuration → Site URL `https://noticedapp.vercel.app`, and add it to Redirect URLs.
 4. Copy the Project URL and anon key into Vercel as `SUPABASE_URL` and `SUPABASE_ANON_KEY`, then redeploy.
 
 Supabase's built-in email sender is rate-limited to a handful of messages an hour, which is fine for the two of us and not for launch. Before launch, add a custom SMTP provider (Resend's free tier is enough) under Authentication → SMTP.
