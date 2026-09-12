@@ -191,7 +191,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
   <section class="panel main" id="main"></section>
 </main>
 
-<p class="foot-note">Everything you add stays on this device. Nothing is pulled from Instagram or anywhere else: what you know about someone, you add yourself. <button class="linkbtn" id="btnReset">Start again with the examples</button></p>
+<p class="foot-note">Everything you add stays on this device. Suggestions are generated on request from your notes and nothing else. Nothing is pulled from Instagram or anywhere else: what you know about someone, you add yourself. <button class="linkbtn" id="btnReset">Start again with the examples</button></p>
 
 <dialog id="dlg"><div class="in" id="dlgIn"></div></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -207,7 +207,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
 
   function seed(){
     return {sel:null, people:[
-      {id:uid(), name:'Sarah', emoji:'🎨', rel:'Sister', birthday:'1995-11-03', insta:'sarah.makes', spotify:'', budget:40, example:true, isMe:false,
+      {id:uid(), name:'Sarah', emoji:'🎨', rel:'Sister', birthday:'1995-11-03', insta:'sarah.makes', spotify:'', budget:40, country:'United Kingdom', example:true, isMe:false,
         notes:[
           {id:uid(), d:'2026-09-06', t:'Started a pottery evening class in Crouch End. Came back covered in slip and completely happy.', tags:['art'], img:''},
           {id:uid(), d:'2026-08-24', t:'Said the V&A ceramics rooms were her favourite thing in London. Wants to go back with more time.', tags:['art','outdoors'], img:''},
@@ -218,13 +218,13 @@ dialog h2{font-size:24px; margin-bottom:12px}
           {id:uid(), title:'Half-day wheel-throwing workshop, Skandihus', type:'experience', link:'', price:'£65', fast:true, given:false, why:'Extends the class she already loves'},
           {id:uid(), title:'Studio apron in waxed cotton', type:'object', link:'', price:'£38', fast:true, given:true, givenOn:'2026-05-10', why:'Given for her last birthday'}
         ]},
-      {id:uid(), name:'Dad', emoji:'🌿', rel:'Father', birthday:'1960-02-18', insta:'', spotify:'', budget:50, example:true, isMe:false,
+      {id:uid(), name:'Dad', emoji:'🌿', rel:'Father', birthday:'1960-02-18', insta:'', spotify:'', budget:50, country:'Turkey', example:true, isMe:false,
         notes:[
-          {id:uid(), d:'2026-09-01', t:'Spent the whole weekend on the tomatoes. Wants a proper greenhouse thermometer.', tags:['plants','home'], img:''},
+          {id:uid(), d:'2026-09-01', t:'Spent the whole weekend on the tomatoes at the house in Bodrum. Wants a proper greenhouse thermometer.', tags:['plants','home'], img:''},
           {id:uid(), d:'2026-08-15', t:'Mentioned missing Turkish coffee made properly, the kind with the foam.', tags:['food & drink'], img:''}
         ],
         ideas:[]},
-      {id:uid(), name:'Me', emoji:'🎹', rel:'That is you', birthday:'', insta:'', spotify:'', budget:30, example:true, isMe:true,
+      {id:uid(), name:'Me', emoji:'🎹', rel:'That is you', birthday:'', insta:'', spotify:'', budget:30, country:'United Kingdom', example:true, isMe:true,
         notes:[
           {id:uid(), d:'2026-09-10', t:'Sang at the Proms. Still can\'t quite believe it. Want to mark it somehow.', tags:['music'], img:''},
           {id:uid(), d:'2026-09-05', t:'Keep meaning to get back to running on the Heath early mornings.', tags:['sport','outdoors'], img:''}
@@ -274,6 +274,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
     const meta=[];
     if(p.birthday) meta.push(`<span>🎂 ${fmt(p.birthday)}${dd!==null?` <b class="tabular">(${dd===0?'today':'in '+dd+' days'})</b>`:''}</span>`);
     if(p.budget) meta.push(`<span>Usual budget <b>£${esc(p.budget)}</b></span>`);
+    if(p.country&&p.country!=='United Kingdom') meta.push(`<span>Lives in <b>${esc(p.country)}</b></span>`);
     if(p.insta) meta.push(`<a href="https://instagram.com/${esc(p.insta.replace('@',''))}" target="_blank" rel="noopener">@${esc(p.insta.replace('@',''))}</a>`);
     if(p.spotify) meta.push(`<a href="${esc(p.spotify)}" target="_blank" rel="noopener">Spotify</a>`);
     const visibleIdeas=p.ideas.filter(i=>ideaFilter==='all'||i.type===ideaFilter);
@@ -368,7 +369,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
       p.ideas.unshift({id:uid(), title:$('#ideaT').value.trim(), type:$('#ideaType').value, link:$('#ideaL').value.trim(), price:$('#ideaP').value.trim(), fast:$('#ideaF').value==='1', given:false, why:''}); save(); renderMain(); toast('Idea saved.'); };
     $('#suggest').onclick=()=>suggest(p);
     $('#write').onclick=()=>writeMessages([p], $('#mocc').value, $('#tone').value, $('#mstatus'), $('#msgList'), $('#write'));
-    if(!sampleReady){ $('#suggest').disabled=true; $('#write').disabled=true; $('#status').textContent=sampleChecked?'Suggestions need the claude.ai viewer. Open this page there to use them.':'Checking whether suggestions are available…'; }
+    setReady();
   }
 
   function render(){ renderSide(); const tb=$('#btnTogether'); tb.classList.toggle('active', state.view==='group'); tb.onclick=()=>{state.view='group'; save(); render();}; if(state.view==='group') renderGroup(); else renderMain(); }
@@ -388,6 +389,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
         <div><label for="pBud">Usual budget (£)</label><input type="number" id="pBud" min="5" step="5" value="${esc(p?.budget||40)}"></div>
       </div>
       <div class="two">
+        <div><label for="pCountry">Where they live</label><input id="pCountry" list="countries" placeholder="United Kingdom" value="${esc(p?.country||'United Kingdom')}"><datalist id="countries"><option>United Kingdom</option><option>Ireland</option><option>France</option><option>Germany</option><option>Spain</option><option>Italy</option><option>Netherlands</option><option>Turkey</option><option>United States</option><option>Canada</option><option>Australia</option><option>New Zealand</option><option>Hong Kong</option><option>Singapore</option><option>United Arab Emirates</option><option>India</option><option>Japan</option></datalist></div>
         <div><label for="pInsta">Instagram handle</label><input id="pInsta" placeholder="@name" value="${esc(p?.insta||'')}"></div>
         <div><label for="pSpot">Spotify profile link</label><input type="url" id="pSpot" placeholder="https://open.spotify.com/user/…" value="${esc(p?.spotify||'')}"></div>
       </div>
@@ -400,7 +402,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
     d.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{ d.querySelectorAll('[data-e]').forEach(x=>x.classList.remove('on')); b.classList.add('on'); emoji=b.dataset.e; });
     $('#pCancel').onclick=()=>d.close();
     $('#pForm').onsubmit=e=>{ e.preventDefault();
-      const data={name:$('#pName').value.trim(), rel:$('#pRel').value.trim()||'Friend', emoji, birthday:$('#pBday').value, budget:+$('#pBud').value||40, insta:$('#pInsta').value.trim(), spotify:$('#pSpot').value.trim(), isMe:$('#pMe').checked};
+      const data={name:$('#pName').value.trim(), rel:$('#pRel').value.trim()||'Friend', emoji, birthday:$('#pBday').value, country:$('#pCountry').value.trim()||'United Kingdom', budget:+$('#pBud').value||40, insta:$('#pInsta').value.trim(), spotify:$('#pSpot').value.trim(), isMe:$('#pMe').checked};
       if(p){ Object.assign(p,data); p.example=false; } else { const np={id:uid(), notes:[], ideas:[], example:false, ...data}; state.people.push(np); state.sel=np.id; }
       save(); d.close(); render(); toast(p?'Saved.':'Added.'); };
     d.showModal();
@@ -409,23 +411,41 @@ dialog h2{font-size:24px; margin-bottom:12px}
   $('#btnAdd').onclick=openAdd;
   $('#btnReset').onclick=()=>{ if(confirm('Replace everything with the example people?')){ state=seed(); state.sel=state.people[0].id; save(); render(); } };
 
-  // ---- suggestions via the claude.ai viewer
-  let sample=null, sampleReady=false, sampleChecked=false;
+  // ---- one way to ask: the claude.ai viewer when the page runs there, otherwise our own /api/suggest
+  const SCHEMA_IDEAS={type:'object',properties:{ideas:{type:'array',items:{type:'object',properties:{title:{type:'string'},type:{type:'string',enum:['object','experience']},why:{type:'string'},suits:{type:'string'},price:{type:'string'},where:{type:'string'},fast:{type:'boolean'}},required:['title','type','why','price','where','fast'],additionalProperties:false}}},required:['ideas'],additionalProperties:false};
+  const SCHEMA_MSGS={type:'object',properties:{messages:{type:'array',items:{type:'object',properties:{label:{type:'string'},text:{type:'string'}},required:['label','text'],additionalProperties:false}}},required:['messages'],additionalProperties:false};
+  let sample=null, sampleReady=false, sampleChecked=false, serverReady=false;
+  async function ask(prompt, schema){
+    if(sample) return sample.json(prompt,{modelTier:'default'});
+    const r=await fetch('/api/suggest',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt,schema})});
+    if(!r.ok){ let e={}; try{ e=await r.json(); }catch(x){} throw {code:e.error||('http_'+r.status), message:e.message}; }
+    return r.json();
+  }
+  function setReady(){
+    const ready=sampleReady||serverReady;
+    for(const id of ['suggest','write','gsuggest','gwrite']){ const b=document.getElementById(id); if(b&&!b.dataset.keep) b.disabled=!ready; }
+    const msg = ready?'' : !sampleChecked?'Checking whether suggestions are available…' : location.protocol==='file:'?'Suggestions need the live site or the claude.ai page.' : 'Suggestions aren\'t configured on this deployment yet.';
+    for(const id of ['status','gstatus']){ const el=document.getElementById(id); if(el&&!el.dataset.keep) el.textContent=msg; }
+  }
   (async()=>{
     try{ if(window.claude && typeof window.claude.use==='function'){ sample=await window.claude.use('sample'); } }catch(e){ sample=null; }
-    sampleChecked=true; sampleReady=!!sample;
-    for(const id of ['suggest','write','gsuggest','gwrite']){ const b=document.getElementById(id); if(b) b.disabled=!sampleReady; } for(const id of ['status','gstatus']){ const el=document.getElementById(id); if(el) el.textContent=sampleReady?'':'Suggestions need the claude.ai viewer. Open this page there to use them.'; }
+    sampleReady=!!sample;
+    if(!sampleReady && location.protocol.startsWith('http')){
+      try{ const r=await fetch('/api/suggest',{method:'GET'}); const j=await r.json(); serverReady=!!(r.ok&&j.configured); }catch(e){ serverReady=false; }
+    }
+    sampleChecked=true; setReady();
   })();
 
   async function suggest(p){
-    if(!sample) return;
+    if(!(sampleReady||serverReady)) return;
     const occ=$('#occ').value, bud=$('#bud').value; const st=$('#status'); const list=$('#sugList'); const btn=$('#suggest');
     btn.disabled=true; st.textContent='Thinking about '+(p.isMe?'you':p.name)+'…'; list.innerHTML='';
     const notes=p.notes.map(n=>`- (${n.d}) ${n.t}${n.tags.length?' [tags: '+n.tags.join(', ')+']':''}`).join('\n')||'- (no notes yet)';
     const given=p.ideas.filter(i=>i.given).map(i=>i.title).join('; ')||'none';
     const open=p.ideas.filter(i=>!i.given).map(i=>i.title).join('; ')||'none';
-    const prompt=`You are a thoughtful, tasteful gift adviser in the UK. ${p.isMe?'The person is buying a small treat for themselves.':`The buyer is choosing a gift for ${p.name}, their ${p.rel}.`}
-Occasion: ${occ}. Budget: under £${bud}. Today: ${today()}.
+    const where=p.country||'United Kingdom'; const abroad=where!=='United Kingdom';
+    const prompt=`You are a thoughtful, tasteful gift adviser. ${p.isMe?'The person is buying a small treat for themselves.':`The buyer, who is in the UK, is choosing a gift for ${p.name}, their ${p.rel}.`} ${p.isMe?`They live in ${where}.`:`${p.name} lives in ${where}.`}
+Occasion: ${occ}. Budget: under £${bud} (or the equivalent in local currency). Today: ${today()}.
 
 Everything the buyer has noted about ${p.isMe?'themselves':p.name} over time:
 ${notes}
@@ -433,12 +453,12 @@ ${notes}
 Already given (never suggest these or near-duplicates): ${given}
 Already on their ideas list (do not repeat): ${open}
 
-Suggest exactly 6 ideas: 3 objects and 3 experiences or places (things to do, places to go, or something to pay for on their behalf). Each must connect to a specific note. Prefer things obtainable in the UK within 48 hours (named retailers, London venues, or bookable experiences). Be specific, not generic: name the actual thing.
+Suggest exactly 6 ideas: 3 objects and 3 experiences or places (things to do, places to go, or something to pay for on their behalf). Each must connect to a specific note. ${abroad?`Everything must be deliverable to, or happen in, ${where}: use retailers that ship there or local ones, name local venues and experiences near where they live, and give prices in local currency with a rough £ equivalent.`:'Prefer things obtainable in the UK within 48 hours (named retailers, London venues, or bookable experiences).'} Be specific, not generic: name the actual thing.
 
 Respond with JSON only, in this exact shape:
 {"ideas":[{"title":"","type":"object|experience","why":"one sentence tying it to a note","price":"£xx","where":"retailer or venue, and how fast","fast":true}]}`;
     try{
-      const out=await sample.json(prompt,{modelTier:'default'});
+      const out=await ask(prompt, SCHEMA_IDEAS);
       const ideas=(out&&out.ideas)||[];
       if(!ideas.length) throw {code:'empty'};
       st.textContent='';
@@ -451,8 +471,8 @@ Respond with JSON only, in this exact shape:
         p.ideas.unshift({id:uid(), title:i.title, type:i.type==='experience'?'experience':'object', link:'', price:i.price||'', fast:!!i.fast, given:false, why:i.why||''}); save(); b.textContent='Saved'; b.disabled=true; renderSide(); toast('Saved to ideas.'); });
     }catch(e){
       const c=e&&e.code;
-      st.textContent = c==='not_granted'?'Suggestions were declined for this page.' : c==='rate_limited'?'Too many requests just now. Try again in a minute.' : 'Couldn\'t get suggestions this time. Try again.';
-    }finally{ btn.disabled=!sampleReady; }
+      st.textContent = c==='not_granted'?'Suggestions were declined for this page.' : c==='rate_limited'?'Too many requests just now. Try again in a minute.' : c==='not_configured'?'Suggestions aren\'t configured on this deployment yet.' : 'Couldn\'t get suggestions this time. Try again.';
+    }finally{ btn.disabled=!(sampleReady||serverReady); }
   }
 
 
@@ -498,21 +518,22 @@ Respond with JSON only, in this exact shape:
     m.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{ state.gmode=b.dataset.mode; save(); renderGroup(); });
     $('#gsuggest').onclick=()=>suggestGroup(picked, team);
     $('#gwrite').onclick=()=>writeMessages(picked, $('#gmocc').value, $('#gtone').value, $('#gmstatus'), $('#gmsgList'), $('#gwrite'));
-    if(!sampleReady){ $('#gsuggest').disabled=true; $('#gwrite').disabled=true; if(picked.length>=2) $('#gstatus').textContent=sampleChecked?'Suggestions need the claude.ai viewer. Open this page there to use them.':'Checking whether suggestions are available…'; }
+    if(picked.length>=2) setReady(); else { $('#gsuggest').disabled=true; }
   }
 
   async function suggestGroup(picked, team){
-    if(!sample||picked.length<2) return;
+    if(!(sampleReady||serverReady)||picked.length<2) return;
     const occ=$('#gocc').value, bud=$('#gbud').value, st=$('#gstatus'), list=$('#gsugList'), btn=$('#gsuggest');
     btn.disabled=true; st.textContent='Thinking about the '+picked.length+' of them…'; list.innerHTML='';
-    const block=picked.map(p=>`${p.name} (${p.rel}):\n${notesFor(p)}`).join('\n\n');
+    const block=picked.map(p=>`${p.name} (${p.rel}, lives in ${p.country||'United Kingdom'}):\n${notesFor(p)}`).join('\n\n');
+    const countries=[...new Set(picked.map(p=>p.country||'United Kingdom'))];
     const prompt= team
       ? `You are a thoughtful gift adviser in the UK. A buyer wants to give the SAME small gift to every member of a team of ${picked.length} people, for: ${occ}. Budget: under £${bud} per person. Today: ${today()}.
 
 What the buyer knows about each person:
 ${block}
 
-Suggest exactly 6 gifts, each bought identically for everyone. Each must be appropriate for a workplace, not embarrassing for anyone, and chosen so that it connects to as many of the people as possible. Prefer things available in the UK within 48 hours from named retailers, with sensible bulk options. For each, say who it suits most and who it might miss.
+Suggest exactly 6 gifts, each bought identically for everyone. Each must be appropriate for a workplace, not embarrassing for anyone, and chosen so that it connects to as many of the people as possible. ${countries.length>1?`The team is spread across ${countries.join(', ')}, so prefer things that can be sent to each country (digital, or retailers that ship internationally), and say how.`:`Prefer things available in ${countries[0]} within 48 hours from named retailers, with sensible bulk options.`} For each, say who it suits most and who it might miss.
 
 Respond with JSON only, in this exact shape:
 {"ideas":[{"title":"","type":"object","why":"one sentence on why it works for the group","suits":"who it lands with best, and who it might miss","price":"£xx per person","where":"retailer and how fast","fast":true}]}`
@@ -521,12 +542,12 @@ Respond with JSON only, in this exact shape:
 What the organiser knows about each person:
 ${block}
 
-Suggest exactly 6 things to do or places to go together in London (or a day trip from it), each chosen so it suits the mix of people above. Be specific: name the actual venue, class, restaurant, walk, show or activity. Mix at least two price levels and at least one option that costs almost nothing. For each, say which people it especially suits and why, using their notes.
+Suggest exactly 6 things to do or places to go together${countries.length>1?`. The group lives across ${countries.join(', ')}, so include options that work remotely or in whichever city they are most likely to meet, and say which`:` in ${countries[0]==='United Kingdom'?'London (or a day trip from it)':countries[0]}`}, each chosen so it suits the mix of people above. Be specific: name the actual venue, class, restaurant, walk, show or activity. Mix at least two price levels and at least one option that costs almost nothing. For each, say which people it especially suits and why, using their notes.
 
 Respond with JSON only, in this exact shape:
 {"ideas":[{"title":"","type":"experience","why":"one sentence on why it fits this group","suits":"which people it especially suits and why","price":"£xx per head","where":"venue or area, and how to book","fast":true}]}`;
     try{
-      const out=await sample.json(prompt,{modelTier:'default'}); const ideas=(out&&out.ideas)||[]; if(!ideas.length) throw {code:'empty'};
+      const out=await ask(prompt, SCHEMA_IDEAS); const ideas=(out&&out.ideas)||[]; if(!ideas.length) throw {code:'empty'};
       st.textContent='';
       list.innerHTML=ideas.map((i,k)=>`<li class="sug">
         <div class="ti"><span class="kind ${i.type==='object'?'object':'experience'}">${i.type==='object'?'OBJ':'EXP'}</span>${esc(i.title)}</div>
@@ -536,12 +557,12 @@ Respond with JSON only, in this exact shape:
       list.querySelectorAll('[data-gsave]').forEach(b=>b.onclick=()=>{ const i=ideas[+b.dataset.gsave];
         for(const p of picked){ p.ideas.unshift({id:uid(), title:i.title, type:i.type==='object'?'object':'experience', link:'', price:i.price||'', fast:!!i.fast, given:false, why:i.why||''}); }
         save(); b.textContent='Saved'; b.disabled=true; toast('Saved to '+picked.length+' people.'); });
-    }catch(e){ const c=e&&e.code; st.textContent = c==='not_granted'?'Suggestions were declined for this page.' : c==='rate_limited'?'Too many requests just now. Try again in a minute.' : 'Couldn\'t get suggestions this time. Try again.'; }
-    finally{ btn.disabled=!sampleReady||picked.length<2; }
+    }catch(e){ const c=e&&e.code; st.textContent = c==='not_granted'?'Suggestions were declined for this page.' : c==='rate_limited'?'Too many requests just now. Try again in a minute.' : c==='not_configured'?'Suggestions aren\'t configured on this deployment yet.' : 'Couldn\'t get suggestions this time. Try again.'; }
+    finally{ btn.disabled=!(sampleReady||serverReady)||picked.length<2; }
   }
 
   async function writeMessages(people, occ, tone, st, list, btn){
-    if(!sample||!people.length) return;
+    if(!(sampleReady||serverReady)||!people.length) return;
     btn.disabled=true; st.textContent='Writing…'; list.innerHTML='';
     const one=people.length===1&&!people[0].isMe;
     const block=people.map(p=>`${p.isMe?'The writer themself':p.name+' ('+p.rel+')'}:\n${notesFor(p)}`).join('\n\n');
@@ -554,12 +575,12 @@ Rules: 2 to 4 sentences each. No generic greeting-card phrases, no "hope this fi
 
 Respond with JSON only: {"messages":[{"label":"three-word label","text":"the message"}]}`;
     try{
-      const out=await sample.json(prompt,{modelTier:'default'}); const msgs=(out&&out.messages)||[]; if(!msgs.length) throw {code:'empty'};
+      const out=await ask(prompt, SCHEMA_MSGS); const msgs=(out&&out.messages)||[]; if(!msgs.length) throw {code:'empty'};
       st.textContent='';
       list.innerHTML=msgs.map((mm,k)=>`<li class="msg"><div class="lab">${esc(mm.label||'Option '+(k+1))}</div><p>${esc(mm.text)}</p><button class="btn sm ghost" data-copy="${k}">Copy</button></li>`).join('');
       list.querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{ try{ await navigator.clipboard.writeText(msgs[+b.dataset.copy].text); b.textContent='Copied'; toast('Copied.'); }catch(e){ prompt('Copy this:', msgs[+b.dataset.copy].text); } });
     }catch(e){ const c=e&&e.code; st.textContent = c==='not_granted'?'Writing was declined for this page.' : c==='rate_limited'?'Too many requests just now. Try again in a minute.' : 'Couldn\'t write messages this time. Try again.'; }
-    finally{ btn.disabled=!sampleReady; }
+    finally{ btn.disabled=!(sampleReady||serverReady); }
   }
 
   render();

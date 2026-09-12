@@ -10,9 +10,9 @@ Most gifting apps start from the shop. Wrapid starts from the person. You keep a
 
 The longer you use it, the better it gets, and the harder it is to leave. The notes are the product.
 
-## What the MVP does (v0.2)
+## What the MVP does (v0.3)
 
-- **People**: the handful of people you buy for most, each with an icon, relationship, birthday, usual budget, Instagram handle and Spotify link
+- **People**: the handful of people you buy for most, each with an icon, relationship, birthday, usual budget, where they live (any country: suggestions use local retailers, local venues and local currency), Instagram handle and Spotify link
 - **What you've learnt**: dated notes with tags and an optional image, one per thing you noticed
 - **Gift ideas**: a running list per person, objects and experiences, with a 48h flag, and a "Given" button so nothing is repeated
 - **Suggest ideas**: reads the notes and returns 3 objects and 3 experiences with a reason for each, filtered by occasion and budget (runs in the claude.ai viewer)
@@ -24,24 +24,39 @@ Data lives in the browser (localStorage). Nothing is pulled from Instagram or an
 
 ## Stack
 
-Single `index.html`. No build step, no framework, no dependencies beyond two Google Fonts. Gift suggestions, group planning and message writing use the claude.ai artifact runtime's `sample` capability, so they work on the live link above and degrade gracefully (button disabled, with a message) anywhere else.
+- `index.html`: the whole app. No build step, no framework, two Google Fonts.
+- `api/suggest.js`: one Vercel serverless function. The page posts a prompt and the JSON shape it expects; the function calls Claude (`claude-opus-5`, structured JSON output, effort `medium`, server-side refusal fallbacks) and returns parsed JSON. The API key lives only in Vercel's environment.
 
-## Running it
+When the page is opened on claude.ai it uses the viewer's built-in `sample` capability instead, so the same file works in both places.
 
-Open `index.html` in a browser. That's it.
+## Running it locally
+
+Open `index.html` in a browser for everything except suggestions. For the full thing:
+
+```
+npm install
+npx vercel dev
+```
+
+and put `ANTHROPIC_API_KEY=...` in a `.env` file (gitignored).
 
 ## Deploying to Vercel
 
-Import this repo (eyavuz21/wrapid) at https://vercel.com/new, framework preset "Other", no build command, output directory `.`. It will serve as a static site.
+```
+npx vercel login
+npx vercel --prod
+npx vercel env add ANTHROPIC_API_KEY production   # paste the key when prompted
+npx vercel --prod                                  # redeploy so the function picks it up
+```
 
-One caveat: on Vercel the **Suggest**, **Together** and **Write** buttons will be disabled, because the MVP calls Claude through the claude.ai viewer rather than through a server. Making suggestions work on Vercel is the first real engineering task: a small serverless function (`/api/suggest`) that holds an Anthropic API key and calls the Messages API with the same prompt the page builds today.
+Framework preset "Other", no build command. Vercel serves `index.html` as static and `api/suggest.js` as a Node function automatically. Get an API key at console.anthropic.com.
 
 ## Roadmap
 
 See the planning doc for the full picture. In order:
 
-1. **v0.3**: suggestions via a serverless function so the Vercel deploy is complete; shared accounts so two people (say, two siblings) see the same notes
-2. **v0.4**: buy links with affiliate tracking (Amazon, Not On The High Street, Bloom & Wild, Buyagift), occasion reminders by email
+1. **v0.4**: shared accounts so two people (say, two siblings) see the same notes; sign-in
+2. **v0.5**: buy links with affiliate tracking (Amazon, Not On The High Street, Bloom & Wild, Buyagift), occasion reminders by email
 3. **Later, only once there are users**: reward points and tiers, sending points to someone who has to sign up to use them, a community feed and messaging, self-gift suggestions as a standalone feature
 
 ## Not doing

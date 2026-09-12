@@ -1,0 +1,10 @@
+{
+  "name": "wrapid",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "description": "A private log of what you learn about the people you love, turned into gift ideas, group plans and card messages.",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.125.0"
+  }
+}
