@@ -1,4 +1,4 @@
-<title>Keepsake</title>
+<title>Wrapid</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Manrope:wght@400;500;600;700;800&display=swap">
 <style>
@@ -43,6 +43,7 @@ textarea{min-height:80px; resize:vertical}
   box-shadow:0 6px 16px rgba(255,107,53,.35);
 }
 .brand h1{font-size:34px}
+.w1{color:var(--tangerine)} .w2{color:var(--pistachio)}
 .brand small{display:block; color:var(--muted); font-family:"Manrope"; font-weight:600; font-size:13px; letter-spacing:.01em}
 .actions{display:flex; gap:8px; flex-wrap:wrap}
 
@@ -142,6 +143,23 @@ dialog h2{font-size:24px; margin-bottom:12px}
 .emojis button.on{border-color:var(--tangerine); background:var(--chip)}
 .dlgrow{display:flex; gap:8px; justify-content:flex-end; margin-top:14px}
 .linkbtn{background:none; border:none; color:var(--cornflower); font-weight:700; text-decoration:underline; padding:0}
+.together{width:100%; margin-top:12px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px; border-radius:14px; border:1.5px dashed var(--line); background:transparent; color:var(--ink); text-align:left}
+.together:hover,.together.active{background:var(--soft); border-style:solid; border-color:var(--cornflower)}
+.together b{display:block} .together small{color:var(--muted); font-weight:600}
+.picks{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 14px}
+.pick{display:inline-flex; align-items:center; gap:8px; padding:6px 12px 6px 6px; border-radius:999px; border:1.5px solid var(--line); background:var(--card); color:var(--ink); font-weight:700}
+.pick .avatar{width:28px; height:28px; font-size:16px; border-radius:8px}
+.pick.on{border-color:var(--marigold); background:var(--soft); box-shadow:inset 0 0 0 1px var(--marigold)}
+.modes{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:6px 0 14px}
+@media (max-width:700px){ .modes{grid-template-columns:1fr} }
+.mode{padding:12px 14px; border-radius:14px; border:1.5px solid var(--line); background:var(--card); color:var(--ink); text-align:left; cursor:pointer}
+.mode.on{border-color:var(--cornflower); background:var(--soft); box-shadow:inset 0 0 0 1px var(--cornflower)}
+.mode b{display:block; font-family:"Bricolage Grotesque"; font-size:17px} .mode small{color:var(--muted); font-weight:600}
+.msgs{list-style:none; margin:12px 0 0; padding:0; display:grid; gap:10px}
+.msg{background:var(--card); border:1.5px solid var(--line); border-radius:14px; padding:12px 14px}
+.msg .lab{font-size:11.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.msg p{margin:6px 0 8px; white-space:pre-wrap}
+.sug .suits{font-size:12px; color:var(--pistachio); font-weight:800}
 .foot-note{font-size:13px; color:var(--muted); text-align:center; max-width:1180px; margin:0 auto; padding:0 24px 30px}
 .example-badge{font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); border:1.5px dashed var(--line); padding:2px 7px; border-radius:999px}
 .toast{position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--marigold); color:#1B1530; padding:10px 16px; border-radius:999px; font-weight:800; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:opacity .2s}
@@ -152,9 +170,9 @@ dialog h2{font-size:24px; margin-bottom:12px}
 <header class="top">
   <div class="row">
     <div class="brand">
-      <div class="bow" aria-hidden="true">K</div>
+      <div class="bow" aria-hidden="true">W</div>
       <div>
-        <h1>Keepsake</h1>
+        <h1><span class="w1">Wrap</span><span class="w2">id</span></h1>
         <small>Remember what makes them light up. Then give them exactly that.</small>
       </div>
     </div>
@@ -168,18 +186,19 @@ dialog h2{font-size:24px; margin-bottom:12px}
   <aside class="panel side">
     <h2>Your people <span class="count" id="count"></span></h2>
     <ul class="people" id="people"></ul>
+    <button class="together" id="btnTogether"><span><b>Together</b><small>Group celebrations and team gifts</small></span><span aria-hidden="true">→</span></button>
   </aside>
   <section class="panel main" id="main"></section>
 </main>
 
-<p class="foot-note">Working title. Everything you add stays on this device. Nothing is pulled from Instagram or anywhere else: what you know about someone, you add yourself. <button class="linkbtn" id="btnReset">Start again with the examples</button></p>
+<p class="foot-note">Everything you add stays on this device. Nothing is pulled from Instagram or anywhere else: what you know about someone, you add yourself. <button class="linkbtn" id="btnReset">Start again with the examples</button></p>
 
 <dialog id="dlg"><div class="in" id="dlgIn"></div></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 (function(){
-  const KEY='keepsake.v1';
+  const KEY='wrapid.v1';
   const TAGS=['music','books','food & drink','pampering','home','fashion','outdoors','tech','art','travel','sport','wellness','kids','plants','games'];
   const ACCENTS=['tangerine','marigold','pistachio','cornflower','bubblegum'];
   const EMOJIS=['🌻','🎸','📚','🍰','🧘','🏔️','🎨','🐶','🌊','🍷','⚽','🎬','🧶','🚴','🌿','🎹','☕','🦋','🪴','🎁','✨','🌈','🐱','🍜'];
@@ -217,6 +236,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
   function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
   let state=load();
   if(!state.sel && state.people[0]) state.sel=state.people[0].id;
+  if(!state.view) state.view='person'; if(!Array.isArray(state.group)) state.group=[]; if(!state.gmode) state.gmode='celebrate';
 
   const $=s=>document.querySelector(s);
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -237,11 +257,11 @@ dialog h2{font-size:24px; margin-bottom:12px}
     const sorted=[...state.people].sort((a,b)=>{const da=daysToBirthday(a.birthday)??999, db=daysToBirthday(b.birthday)??999; return da-db;});
     for(const p of sorted){
       const li=document.createElement('li'); const b=document.createElement('button'); const acc=ACCENTS[state.people.indexOf(p)%ACCENTS.length];
-      b.className='person'+(p.id===state.sel?' active':''); b.setAttribute('aria-pressed', p.id===state.sel);
+      b.className='person'+(p.id===state.sel&&state.view==='person'?' active':''); b.setAttribute('aria-pressed', p.id===state.sel);
       const dd=daysToBirthday(p.birthday);
       let due=''; if(dd!==null){ due=`<span class="due ${dd===0?'today':dd<=14?'soon':''} tabular">${dd===0?'Today!':dd+'d'}</span>`; }
       b.style.setProperty('--acc',`var(--${acc})`); b.innerHTML=`<span class="avatar" aria-hidden="true">${esc(p.emoji)}</span><span><span class="name">${esc(p.name)}</span><br><span class="rel">${esc(p.rel)}</span></span>${due}`;
-      b.onclick=()=>{state.sel=p.id; save(); render();};
+      b.onclick=()=>{state.sel=p.id; state.view='person'; save(); render();};
       li.appendChild(b); ul.appendChild(li);
     }
   }
@@ -249,7 +269,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
   let ideaFilter='all';
   function renderMain(){
     const m=$('#main'); const p=person();
-    if(!p){ m.innerHTML=`<div class="empty"><h2>No one here yet</h2><p>Add the people you buy for most. Then jot down what you learn about them as you go, and Keepsake turns it into gift ideas when an occasion comes round.</p><p><button class="btn primary" id="emptyAdd">+ Add a person</button></p></div>`; $('#emptyAdd').onclick=openAdd; return; }
+    if(!p){ m.innerHTML=`<div class="empty"><h2>No one here yet</h2><p>Add the people you buy for most. Then jot down what you learn about them as you go, and Wrapid turns it into gift ideas when an occasion comes round.</p><p><button class="btn primary" id="emptyAdd">+ Add a person</button></p></div>`; $('#emptyAdd').onclick=openAdd; return; }
     const dd=daysToBirthday(p.birthday); const acc=ACCENTS[state.people.indexOf(p)%ACCENTS.length]; m.style.setProperty('--acc',`var(--${acc})`);
     const meta=[];
     if(p.birthday) meta.push(`<span>🎂 ${fmt(p.birthday)}${dd!==null?` <b class="tabular">(${dd===0?'today':'in '+dd+' days'})</b>`:''}</span>`);
@@ -292,7 +312,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
               <span class="kind ${i.type}" title="${i.type}">${i.type==='object'?'OBJ':'EXP'}</span>
               <div><div class="ti">${i.link?`<a href="${esc(i.link)}" target="_blank" rel="noopener">${esc(i.title)}</a>`:esc(i.title)}${i.fast?'<span class="fast">48h</span>':''}</div>${i.why?`<div class="why">${esc(i.why)}</div>`:''}<div class="pr">${esc(i.price||'')}${i.given?` · given ${esc(fmt(i.givenOn))}`:''}</div></div>
               <div class="actions">${i.given?'':`<button class="btn sm mint" data-given="${i.id}">Given</button>`}<button class="btn sm ghost" data-delidea="${i.id}" aria-label="Delete idea">×</button></div>
-            </li>`).join(''):'<li class="idea"><span class="kind object">OBJ</span><div><div class="ti">No ideas saved yet</div><div class="why">Add one below, or let Keepsake suggest some from the notes.</div></div><span></span></li>'}
+            </li>`).join(''):'<li class="idea"><span class="kind object">OBJ</span><div><div class="ti">No ideas saved yet</div><div class="why">Add one below, or let Wrapid suggest some from the notes.</div></div><span></span></li>'}
           </ul>
           <form class="form" id="ideaForm">
             <label for="ideaT">Add an idea</label>
@@ -320,6 +340,18 @@ dialog h2{font-size:24px; margin-bottom:12px}
         </div>
         <div class="status" id="status"></div>
         <ul class="suggest" id="sugList"></ul>
+      </div>
+
+      <div class="ai">
+        <h3>Write ${p.isMe?'yourself a note':'a message to '+esc(p.name)}</h3>
+        <p>Three short options for the card, drawn from what you've noted. Copy the one that sounds like you and change a word or two.</p>
+        <div class="row">
+          <label>For <select id="mocc"><option>Birthday</option><option>Just because</option><option>Thank you</option><option>Celebration</option><option>Christmas</option><option>Cheer-up</option><option>Apology</option></select></label>
+          <label>Tone <select id="tone"><option>Warm</option><option>Funny</option><option>Short and sweet</option><option>Heartfelt</option><option>Formal</option></select></label>
+          <button class="btn mint" id="write">Write 3 messages</button>
+        </div>
+        <div class="status" id="mstatus"></div>
+        <ul class="msgs" id="msgList"></ul>
       </div>`;
 
     $('#bud').value=String([20,40,75,150].reduce((a,b)=>Math.abs(b-(p.budget||40))<Math.abs(a-(p.budget||40))?b:a));
@@ -335,10 +367,11 @@ dialog h2{font-size:24px; margin-bottom:12px}
     $('#ideaForm').onsubmit=e=>{ e.preventDefault();
       p.ideas.unshift({id:uid(), title:$('#ideaT').value.trim(), type:$('#ideaType').value, link:$('#ideaL').value.trim(), price:$('#ideaP').value.trim(), fast:$('#ideaF').value==='1', given:false, why:''}); save(); renderMain(); toast('Idea saved.'); };
     $('#suggest').onclick=()=>suggest(p);
-    if(!sampleReady){ $('#suggest').disabled=true; $('#status').textContent=sampleChecked?'Suggestions need the claude.ai viewer. Open this page there to use them.':'Checking whether suggestions are available…'; }
+    $('#write').onclick=()=>writeMessages([p], $('#mocc').value, $('#tone').value, $('#mstatus'), $('#msgList'), $('#write'));
+    if(!sampleReady){ $('#suggest').disabled=true; $('#write').disabled=true; $('#status').textContent=sampleChecked?'Suggestions need the claude.ai viewer. Open this page there to use them.':'Checking whether suggestions are available…'; }
   }
 
-  function render(){ renderSide(); renderMain(); }
+  function render(){ renderSide(); const tb=$('#btnTogether'); tb.classList.toggle('active', state.view==='group'); tb.onclick=()=>{state.view='group'; save(); render();}; if(state.view==='group') renderGroup(); else renderMain(); }
 
   // ---- add / edit dialog
   function dialogHTML(p){
@@ -381,7 +414,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
   (async()=>{
     try{ if(window.claude && typeof window.claude.use==='function'){ sample=await window.claude.use('sample'); } }catch(e){ sample=null; }
     sampleChecked=true; sampleReady=!!sample;
-    const b=$('#suggest'); if(b){ b.disabled=!sampleReady; } const s=$('#status'); if(s) s.textContent=sampleReady?'':'Suggestions need the claude.ai viewer. Open this page there to use them.';
+    for(const id of ['suggest','write','gsuggest','gwrite']){ const b=document.getElementById(id); if(b) b.disabled=!sampleReady; } for(const id of ['status','gstatus']){ const el=document.getElementById(id); if(el) el.textContent=sampleReady?'':'Suggestions need the claude.ai viewer. Open this page there to use them.'; }
   })();
 
   async function suggest(p){
@@ -420,6 +453,113 @@ Respond with JSON only, in this exact shape:
       const c=e&&e.code;
       st.textContent = c==='not_granted'?'Suggestions were declined for this page.' : c==='rate_limited'?'Too many requests just now. Try again in a minute.' : 'Couldn\'t get suggestions this time. Try again.';
     }finally{ btn.disabled=!sampleReady; }
+  }
+
+
+  // ---- Together: group celebrations and team gifts
+  function notesFor(p){ return p.notes.map(n=>`  - (${n.d}) ${n.t}${n.tags.length?' [tags: '+n.tags.join(', ')+']':''}`).join('\n')||'  - (no notes yet)'; }
+  function renderGroup(){
+    const m=$('#main'); m.style.removeProperty('--acc');
+    const picked=state.people.filter(p=>state.group.includes(p.id));
+    const team=state.gmode==='team';
+    m.innerHTML=`
+      <div class="profile" style="grid-template-columns:1fr auto; border-color:var(--cornflower)">
+        <div><h2>Together</h2><div class="meta"><span>Pick two or more people, then choose what you're planning.</span></div></div>
+        <span></span>
+      </div>
+      <div class="picks" id="picks">${state.people.length?state.people.map((p,i)=>`<button class="pick ${state.group.includes(p.id)?'on':''}" data-pick="${p.id}" aria-pressed="${state.group.includes(p.id)}"><span class="avatar" style="background:var(--${ACCENTS[i%ACCENTS.length]})" aria-hidden="true">${esc(p.emoji)}</span>${esc(p.name)}</button>`).join(''):'<span class="hint">Add some people first.</span>'}</div>
+      <div class="modes">
+        <button class="mode ${!team?'on':''}" data-mode="celebrate"><b>Celebrate together</b><small>Places to go and things to do that suit everyone you've picked, based on all their notes.</small></button>
+        <button class="mode ${team?'on':''}" data-mode="team"><b>One gift for the whole team</b><small>The same small thing for every person, chosen so it lands with all of them. Good for the workplace.</small></button>
+      </div>
+      <div class="ai">
+        <h3>${team?'Suggest one gift for everyone':'Suggest ways to celebrate together'}</h3>
+        <p>${team?'Six ideas that work for the whole group at the same price per head, with a note on who it suits most and who it might miss.':'Six places or experiences for the group, each with why it suits which people, price per head, and how to book.'}</p>
+        <div class="row">
+          <label>Occasion <select id="gocc">${(team?['Thank you','Christmas','Project finished','Welcome','Leaving','Just because']:['Birthday','Celebration','Reunion','Just because','Christmas','Leaving do']).map(o=>`<option>${o}</option>`).join('')}</select></label>
+          <label>${team?'Per person':'Per head'} <select id="gbud"><option value="10">under £10</option><option value="20" ${team?'selected':''}>under £20</option><option value="40" ${team?'':'selected'}>under £40</option><option value="75">under £75</option><option value="150">under £150</option></select></label>
+          <button class="btn primary" id="gsuggest" ${picked.length<2?'disabled':''}>✨ Suggest</button>
+        </div>
+        <div class="status" id="gstatus">${picked.length<2?'Pick at least two people.':''}</div>
+        <ul class="suggest" id="gsugList"></ul>
+      </div>
+      <div class="ai">
+        <h3>Write a message to the group</h3>
+        <p>Three options for a card everyone will read, or one message you can send to each of them.</p>
+        <div class="row">
+          <label>For <select id="gmocc"><option>Birthday</option><option>Thank you</option><option>Celebration</option><option>Christmas</option><option>Leaving</option><option>Just because</option></select></label>
+          <label>Tone <select id="gtone"><option>Warm</option><option>Funny</option><option>Short and sweet</option><option>Heartfelt</option><option>Formal</option></select></label>
+          <button class="btn mint" id="gwrite" ${picked.length<1?'disabled':''}>Write 3 messages</button>
+        </div>
+        <div class="status" id="gmstatus"></div>
+        <ul class="msgs" id="gmsgList"></ul>
+      </div>`;
+    m.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>{ const id=b.dataset.pick; state.group=state.group.includes(id)?state.group.filter(x=>x!==id):[...state.group,id]; save(); renderGroup(); });
+    m.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{ state.gmode=b.dataset.mode; save(); renderGroup(); });
+    $('#gsuggest').onclick=()=>suggestGroup(picked, team);
+    $('#gwrite').onclick=()=>writeMessages(picked, $('#gmocc').value, $('#gtone').value, $('#gmstatus'), $('#gmsgList'), $('#gwrite'));
+    if(!sampleReady){ $('#gsuggest').disabled=true; $('#gwrite').disabled=true; if(picked.length>=2) $('#gstatus').textContent=sampleChecked?'Suggestions need the claude.ai viewer. Open this page there to use them.':'Checking whether suggestions are available…'; }
+  }
+
+  async function suggestGroup(picked, team){
+    if(!sample||picked.length<2) return;
+    const occ=$('#gocc').value, bud=$('#gbud').value, st=$('#gstatus'), list=$('#gsugList'), btn=$('#gsuggest');
+    btn.disabled=true; st.textContent='Thinking about the '+picked.length+' of them…'; list.innerHTML='';
+    const block=picked.map(p=>`${p.name} (${p.rel}):\n${notesFor(p)}`).join('\n\n');
+    const prompt= team
+      ? `You are a thoughtful gift adviser in the UK. A buyer wants to give the SAME small gift to every member of a team of ${picked.length} people, for: ${occ}. Budget: under £${bud} per person. Today: ${today()}.
+
+What the buyer knows about each person:
+${block}
+
+Suggest exactly 6 gifts, each bought identically for everyone. Each must be appropriate for a workplace, not embarrassing for anyone, and chosen so that it connects to as many of the people as possible. Prefer things available in the UK within 48 hours from named retailers, with sensible bulk options. For each, say who it suits most and who it might miss.
+
+Respond with JSON only, in this exact shape:
+{"ideas":[{"title":"","type":"object","why":"one sentence on why it works for the group","suits":"who it lands with best, and who it might miss","price":"£xx per person","where":"retailer and how fast","fast":true}]}`
+      : `You are a thoughtful planner in London. A group of ${picked.length} people are celebrating together: ${occ}. Budget: under £${bud} per head. Today: ${today()}.
+
+What the organiser knows about each person:
+${block}
+
+Suggest exactly 6 things to do or places to go together in London (or a day trip from it), each chosen so it suits the mix of people above. Be specific: name the actual venue, class, restaurant, walk, show or activity. Mix at least two price levels and at least one option that costs almost nothing. For each, say which people it especially suits and why, using their notes.
+
+Respond with JSON only, in this exact shape:
+{"ideas":[{"title":"","type":"experience","why":"one sentence on why it fits this group","suits":"which people it especially suits and why","price":"£xx per head","where":"venue or area, and how to book","fast":true}]}`;
+    try{
+      const out=await sample.json(prompt,{modelTier:'default'}); const ideas=(out&&out.ideas)||[]; if(!ideas.length) throw {code:'empty'};
+      st.textContent='';
+      list.innerHTML=ideas.map((i,k)=>`<li class="sug">
+        <div class="ti"><span class="kind ${i.type==='object'?'object':'experience'}">${i.type==='object'?'OBJ':'EXP'}</span>${esc(i.title)}</div>
+        <div class="why">${esc(i.why)}</div>${i.suits?`<div class="suits">${esc(i.suits)}</div>`:''}
+        <div class="where">${esc(i.where||'')}${i.fast?'<span class="fast">48h</span>':''}</div>
+        <div class="foot"><b>${esc(i.price||'')}</b><button class="btn sm sun" data-gsave="${k}">Save to ${team?'everyone':'each person'}</button></div></li>`).join('');
+      list.querySelectorAll('[data-gsave]').forEach(b=>b.onclick=()=>{ const i=ideas[+b.dataset.gsave];
+        for(const p of picked){ p.ideas.unshift({id:uid(), title:i.title, type:i.type==='object'?'object':'experience', link:'', price:i.price||'', fast:!!i.fast, given:false, why:i.why||''}); }
+        save(); b.textContent='Saved'; b.disabled=true; toast('Saved to '+picked.length+' people.'); });
+    }catch(e){ const c=e&&e.code; st.textContent = c==='not_granted'?'Suggestions were declined for this page.' : c==='rate_limited'?'Too many requests just now. Try again in a minute.' : 'Couldn\'t get suggestions this time. Try again.'; }
+    finally{ btn.disabled=!sampleReady||picked.length<2; }
+  }
+
+  async function writeMessages(people, occ, tone, st, list, btn){
+    if(!sample||!people.length) return;
+    btn.disabled=true; st.textContent='Writing…'; list.innerHTML='';
+    const one=people.length===1&&!people[0].isMe;
+    const block=people.map(p=>`${p.isMe?'The writer themself':p.name+' ('+p.rel+')'}:\n${notesFor(p)}`).join('\n\n');
+    const prompt=`Write 3 short messages for a card${one?` to ${people[0].name}, the writer's ${people[0].rel}`:people.length===1?' the writer is leaving for themself':` to a group of ${people.length} people`}. Occasion: ${occ}. Tone: ${tone}. British English.
+
+What the writer has noted about ${one?'them':'the people'} over time (use one or two specific details, lightly, never all of them):
+${block}
+
+Rules: 2 to 4 sentences each. No generic greeting-card phrases, no "hope this finds you well", no exclamation marks in the Formal tone, at most one elsewhere. Sound like a real person who knows them, not a card company. Vary the three: one that leans on a specific memory, one that looks forward, one that is simply warm and brief. Do not sign off with a name.
+
+Respond with JSON only: {"messages":[{"label":"three-word label","text":"the message"}]}`;
+    try{
+      const out=await sample.json(prompt,{modelTier:'default'}); const msgs=(out&&out.messages)||[]; if(!msgs.length) throw {code:'empty'};
+      st.textContent='';
+      list.innerHTML=msgs.map((mm,k)=>`<li class="msg"><div class="lab">${esc(mm.label||'Option '+(k+1))}</div><p>${esc(mm.text)}</p><button class="btn sm ghost" data-copy="${k}">Copy</button></li>`).join('');
+      list.querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{ try{ await navigator.clipboard.writeText(msgs[+b.dataset.copy].text); b.textContent='Copied'; toast('Copied.'); }catch(e){ prompt('Copy this:', msgs[+b.dataset.copy].text); } });
+    }catch(e){ const c=e&&e.code; st.textContent = c==='not_granted'?'Writing was declined for this page.' : c==='rate_limited'?'Too many requests just now. Try again in a minute.' : 'Couldn\'t write messages this time. Try again.'; }
+    finally{ btn.disabled=!sampleReady; }
   }
 
   render();
