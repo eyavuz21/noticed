@@ -160,6 +160,18 @@ dialog h2{font-size:24px; margin-bottom:12px}
 .msg .lab{font-size:11.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
 .msg p{margin:6px 0 8px; white-space:pre-wrap}
 .sug .suits{font-size:12px; color:var(--pistachio); font-weight:800}
+.seg{display:inline-flex; border:1.5px solid var(--line); border-radius:999px; overflow:hidden; background:var(--card)}
+.seg button{border:none; background:transparent; color:var(--muted); font-weight:800; padding:8px 14px}
+.seg button.on{background:var(--marigold); color:#1B1530}
+.links{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}
+.links a{font-size:12px; font-weight:800; padding:4px 10px; border-radius:999px; background:var(--soft); border:1.5px solid var(--line); color:var(--ink); text-decoration:none}
+.links a.buy{background:var(--tangerine); border-color:var(--tangerine); color:var(--tangerine-ink)}
+.links a.maps{background:var(--pistachio); border-color:var(--pistachio); color:#0F2E20}
+.src{font-size:11.5px; color:var(--muted); margin-top:4px}
+.auth{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.auth .who{font-size:12.5px; font-weight:700; color:var(--muted)}
+.auth code{background:var(--soft); padding:2px 8px; border-radius:8px; font-weight:800; letter-spacing:.08em; color:var(--marigold)}
+#area{width:auto; min-width:200px}
 .foot-note{font-size:13px; color:var(--muted); text-align:center; max-width:1180px; margin:0 auto; padding:0 24px 30px}
 .example-badge{font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); border:1.5px dashed var(--line); padding:2px 7px; border-radius:999px}
 .toast{position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--marigold); color:#1B1530; padding:10px 16px; border-radius:999px; font-weight:800; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:opacity .2s}
@@ -177,6 +189,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
       </div>
     </div>
     <div class="actions">
+      <span class="auth" id="auth"></span>
       <button class="btn primary" id="btnAdd">+ Add a person</button>
     </div>
   </div>
@@ -233,10 +246,10 @@ dialog h2{font-size:24px; margin-bottom:12px}
     ]};
   }
   function load(){ try{ for(const k of [KEY,...OLD_KEYS]){ const s=localStorage.getItem(k); if(s){ const o=JSON.parse(s); if(k!==KEY){ localStorage.setItem(KEY,s); localStorage.removeItem(k); } return o; } } }catch(e){} return seed(); }
-  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+  let save=function(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} };
   let state=load();
   if(!state.sel && state.people[0]) state.sel=state.people[0].id;
-  if(!state.view) state.view='person'; if(!Array.isArray(state.group)) state.group=[]; if(!state.gmode) state.gmode='celebrate';
+  if(!state.view) state.view='person'; if(!Array.isArray(state.group)) state.group=[]; if(!state.gmode) state.gmode='celebrate'; if(!state.mode) state.mode='online'; if(state.area===undefined) state.area='';
 
   const $=s=>document.querySelector(s);
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -250,6 +263,30 @@ dialog h2{font-size:24px; margin-bottom:12px}
   }
   const fmt=d=>{ if(!d) return ''; const [y,m,dd]=d.split('-'); return new Date(+y,+m-1,+dd).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); };
   const person=()=>state.people.find(p=>p.id===state.sel);
+  const enc=encodeURIComponent;
+  function linksFor(i, mode, area, country){
+    const uk=!country||/united kingdom/i.test(country);
+    const out=[];
+    if(mode==='instore'){
+      const q=[i.where||'', i.title, area||''].filter(Boolean).join(' ');
+      out.push(`<a class="maps" href="https://www.google.com/maps/search/?api=1&query=${enc(q)}" target="_blank" rel="noopener">Directions &amp; hours</a>`);
+      if(i.url) out.push(`<a class="buy" href="${esc(i.url)}" target="_blank" rel="noopener">Shop page</a>`);
+    } else {
+      if(i.url) out.push(`<a class="buy" href="${esc(i.url)}" target="_blank" rel="noopener">Buy</a>`);
+      if(uk){ out.push(`<a href="https://www.johnlewis.com/search?search-term=${enc(i.title)}" target="_blank" rel="noopener">John Lewis</a>`);
+              out.push(`<a href="https://www.amazon.co.uk/s?k=${enc(i.title)}" target="_blank" rel="noopener">Amazon</a>`); }
+      out.push(`<a href="https://www.google.com/search?tbm=shop&q=${enc(i.title+(uk?'':' '+(country||'')))}" target="_blank" rel="noopener">Google Shopping</a>`);
+    }
+    return `<div class="links">${out.join('')}</div>${i.url_title?`<div class="src">${esc(i.url_title)}</div>`:''}`;
+  }
+  function modeControl(prefix){
+    return `<span class="seg" role="group" aria-label="How you'll get it"><button type="button" data-mode-${prefix}="online" class="${state.mode==='online'?'on':''}">Online delivery</button><button type="button" data-mode-${prefix}="instore" class="${state.mode==='instore'?'on':''}">In person today</button></span>
+      <input id="area" placeholder="Where are you? e.g. Finchley N3" value="${esc(state.area)}" ${state.mode==='instore'?'':'hidden'}>`;
+  }
+  function wireMode(root, prefix, rerender){
+    root.querySelectorAll(`[data-mode-${prefix}]`).forEach(b=>b.onclick=()=>{ state.mode=b.getAttribute(`data-mode-${prefix}`); save(); rerender(); });
+    const a=root.querySelector('#area'); if(a) a.onchange=()=>{ state.area=a.value.trim(); save(); };
+  }
 
   function renderSide(){
     const ul=$('#people'); ul.innerHTML='';
@@ -333,7 +370,8 @@ dialog h2{font-size:24px; margin-bottom:12px}
 
       <div class="ai">
         <h3>${p.isMe?'Treat yourself':'Suggest gifts for '+esc(p.name)}</h3>
-        <p>${p.isMe?'Reads your own notes and suggests something you would actually enjoy. Objects and experiences, mostly available in the UK within 48 hours.':'Reads the notes above and suggests a mix of objects and experiences, mostly available in the UK within 48 hours, with a reason for each.'}</p>
+        <p>${p.isMe?'Reads your own notes and suggests something you would actually enjoy.':'Reads the notes above and suggests a mix of objects and experiences with a reason for each.'} ${state.mode==='instore'?'In-person mode: shops you can walk into today and things you can book for tonight.':'Online mode: things that can be delivered, with a link to buy.'}</p>
+        <div class="row">${modeControl('p')}</div>
         <div class="row">
           <label>Occasion <select id="occ"><option>Birthday</option><option>Just because</option><option>Thank you</option><option>Celebration</option><option>Christmas</option><option>Cheer-up</option></select></label>
           <label>Budget <select id="bud"><option value="20">under £20</option><option value="40" selected>under £40</option><option value="75">under £75</option><option value="150">under £150</option></select></label>
@@ -367,6 +405,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
       p.notes.unshift({id:uid(), d:$('#noteD').value||today(), t:$('#noteT').value.trim(), tags, img:$('#noteI').value.trim()}); p.example=false; save(); renderMain(); toast('Noted.'); };
     $('#ideaForm').onsubmit=e=>{ e.preventDefault();
       p.ideas.unshift({id:uid(), title:$('#ideaT').value.trim(), type:$('#ideaType').value, link:$('#ideaL').value.trim(), price:$('#ideaP').value.trim(), fast:$('#ideaF').value==='1', given:false, why:''}); save(); renderMain(); toast('Idea saved.'); };
+    wireMode(m,'p',renderMain);
     $('#suggest').onclick=()=>suggest(p);
     $('#write').onclick=()=>writeMessages([p], $('#mocc').value, $('#tone').value, $('#mstatus'), $('#msgList'), $('#write'));
     setReady();
@@ -415,9 +454,9 @@ dialog h2{font-size:24px; margin-bottom:12px}
   const SCHEMA_IDEAS={type:'object',properties:{ideas:{type:'array',items:{type:'object',properties:{title:{type:'string'},type:{type:'string',enum:['object','experience']},why:{type:'string'},suits:{type:'string'},price:{type:'string'},where:{type:'string'},fast:{type:'boolean'}},required:['title','type','why','price','where','fast'],additionalProperties:false}}},required:['ideas'],additionalProperties:false};
   const SCHEMA_MSGS={type:'object',properties:{messages:{type:'array',items:{type:'object',properties:{label:{type:'string'},text:{type:'string'}},required:['label','text'],additionalProperties:false}}},required:['messages'],additionalProperties:false};
   let sample=null, sampleReady=false, sampleChecked=false, serverReady=false;
-  async function ask(prompt, schema){
+  async function ask(prompt, schema, extra={}){
     if(sample) return sample.json(prompt,{modelTier:'default'});
-    const r=await fetch('/api/suggest',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt,schema})});
+    const r=await fetch('/api/suggest',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt,schema,...extra})});
     if(!r.ok){ let e={}; try{ e=await r.json(); }catch(x){} throw {code:e.error||('http_'+r.status), message:e.message}; }
     return r.json();
   }
@@ -453,22 +492,22 @@ ${notes}
 Already given (never suggest these or near-duplicates): ${given}
 Already on their ideas list (do not repeat): ${open}
 
-Suggest exactly 6 ideas: 3 objects and 3 experiences or places (things to do, places to go, or something to pay for on their behalf). Each must connect to a specific note. ${abroad?`Everything must be deliverable to, or happen in, ${where}: use retailers that ship there or local ones, name local venues and experiences near where they live, and give prices in local currency with a rough £ equivalent.`:'Prefer things obtainable in the UK within 48 hours (named retailers, London venues, or bookable experiences).'} Be specific, not generic: name the actual thing.
+${state.mode==='instore'?`THE BUYER NEEDS THIS TODAY, IN PERSON${state.area?', near '+state.area:''}. Suggest exactly 6 ideas: 4 objects available to walk in and buy today from named shops (chains or well-known independents${state.area?' near '+state.area:''}: give the shop name and the street or area in "where"), and 2 experiences bookable for today or tonight. Each must connect to a specific note.`:`Suggest exactly 6 ideas: 3 objects and 3 experiences or places (things to do, places to go, or something to pay for on their behalf). Each must connect to a specific note.`} ${abroad?`Everything must be deliverable to, or happen in, ${where}: use retailers that ship there or local ones, name local venues and experiences near where they live, and give prices in local currency with a rough £ equivalent.`:'Prefer things obtainable in the UK within 48 hours (named retailers, London venues, or bookable experiences).'} Be specific, not generic: name the actual thing.
 
 Respond with JSON only, in this exact shape:
 {"ideas":[{"title":"","type":"object|experience","why":"one sentence tying it to a note","price":"£xx","where":"retailer or venue, and how fast","fast":true}]}`;
     try{
-      const out=await ask(prompt, SCHEMA_IDEAS);
+      const out=await ask(prompt, SCHEMA_IDEAS, {enrich:true, mode:state.mode, area:state.area, country:where});
       const ideas=(out&&out.ideas)||[];
       if(!ideas.length) throw {code:'empty'};
-      st.textContent='';
+      st.textContent=out.search?'':'';
       list.innerHTML=ideas.map((i,k)=>`<li class="sug">
         <div class="ti"><span class="kind ${i.type==='experience'?'experience':'object'}">${i.type==='experience'?'EXP':'OBJ'}</span>${esc(i.title)}</div>
         <div class="why">${esc(i.why)}</div>
-        <div class="where">${esc(i.where||'')}${i.fast?'<span class="fast">48h</span>':''}</div>
+        <div class="where">${esc(i.where||'')}${i.fast?'<span class="fast">48h</span>':''}</div>${linksFor(i,state.mode,state.area,where)}
         <div class="foot"><b>${esc(i.price||'')}</b><button class="btn sm sun" data-save="${k}">Save idea</button></div></li>`).join('');
       list.querySelectorAll('[data-save]').forEach(b=>b.onclick=()=>{ const i=ideas[+b.dataset.save];
-        p.ideas.unshift({id:uid(), title:i.title, type:i.type==='experience'?'experience':'object', link:'', price:i.price||'', fast:!!i.fast, given:false, why:i.why||''}); save(); b.textContent='Saved'; b.disabled=true; renderSide(); toast('Saved to ideas.'); });
+        p.ideas.unshift({id:uid(), title:i.title, type:i.type==='experience'?'experience':'object', link:i.url||'', price:i.price||'', fast:!!i.fast, given:false, why:i.why||''}); save(); b.textContent='Saved'; b.disabled=true; renderSide(); toast('Saved to ideas.'); });
     }catch(e){
       const c=e&&e.code;
       st.textContent = c==='not_granted'?'Suggestions were declined for this page.' : c==='rate_limited'?'Too many requests just now. Try again in a minute.' : c==='not_configured'?'Suggestions aren\'t configured on this deployment yet.' : 'Couldn\'t get suggestions this time. Try again.';
@@ -495,6 +534,7 @@ Respond with JSON only, in this exact shape:
       <div class="ai">
         <h3>${team?'Suggest one gift for everyone':'Suggest ways to celebrate together'}</h3>
         <p>${team?'Six ideas that work for the whole group at the same price per head, with a note on who it suits most and who it might miss.':'Six places or experiences for the group, each with why it suits which people, price per head, and how to book.'}</p>
+        <div class="row">${modeControl('g')}</div>
         <div class="row">
           <label>Occasion <select id="gocc">${(team?['Thank you','Christmas','Project finished','Welcome','Leaving','Just because']:['Birthday','Celebration','Reunion','Just because','Christmas','Leaving do']).map(o=>`<option>${o}</option>`).join('')}</select></label>
           <label>${team?'Per person':'Per head'} <select id="gbud"><option value="10">under £10</option><option value="20" ${team?'selected':''}>under £20</option><option value="40" ${team?'':'selected'}>under £40</option><option value="75">under £75</option><option value="150">under £150</option></select></label>
@@ -516,6 +556,7 @@ Respond with JSON only, in this exact shape:
       </div>`;
     m.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>{ const id=b.dataset.pick; state.group=state.group.includes(id)?state.group.filter(x=>x!==id):[...state.group,id]; save(); renderGroup(); });
     m.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{ state.gmode=b.dataset.mode; save(); renderGroup(); });
+    wireMode(m,'g',renderGroup);
     $('#gsuggest').onclick=()=>suggestGroup(picked, team);
     $('#gwrite').onclick=()=>writeMessages(picked, $('#gmocc').value, $('#gtone').value, $('#gmstatus'), $('#gmsgList'), $('#gwrite'));
     if(picked.length>=2) setReady(); else { $('#gsuggest').disabled=true; }
@@ -533,7 +574,7 @@ Respond with JSON only, in this exact shape:
 What the buyer knows about each person:
 ${block}
 
-Suggest exactly 6 gifts, each bought identically for everyone. Each must be appropriate for a workplace, not embarrassing for anyone, and chosen so that it connects to as many of the people as possible. ${countries.length>1?`The team is spread across ${countries.join(', ')}, so prefer things that can be sent to each country (digital, or retailers that ship internationally), and say how.`:`Prefer things available in ${countries[0]} within 48 hours from named retailers, with sensible bulk options.`} For each, say who it suits most and who it might miss.
+Suggest exactly 6 gifts, each bought identically for everyone. Each must be appropriate for a workplace, not embarrassing for anyone, and chosen so that it connects to as many of the people as possible. ${state.mode==='instore'?`THE BUYER NEEDS THESE TODAY, IN PERSON${state.area?', near '+state.area:''}: only things stocked in quantity by named shops (give the shop and area in "where"). `:''}${countries.length>1?`The team is spread across ${countries.join(', ')}, so prefer things that can be sent to each country (digital, or retailers that ship internationally), and say how.`:`Prefer things available in ${countries[0]} within 48 hours from named retailers, with sensible bulk options.`} For each, say who it suits most and who it might miss.
 
 Respond with JSON only, in this exact shape:
 {"ideas":[{"title":"","type":"object","why":"one sentence on why it works for the group","suits":"who it lands with best, and who it might miss","price":"£xx per person","where":"retailer and how fast","fast":true}]}`
@@ -542,20 +583,20 @@ Respond with JSON only, in this exact shape:
 What the organiser knows about each person:
 ${block}
 
-Suggest exactly 6 things to do or places to go together${countries.length>1?`. The group lives across ${countries.join(', ')}, so include options that work remotely or in whichever city they are most likely to meet, and say which`:` in ${countries[0]==='United Kingdom'?'London (or a day trip from it)':countries[0]}`}, each chosen so it suits the mix of people above. Be specific: name the actual venue, class, restaurant, walk, show or activity. Mix at least two price levels and at least one option that costs almost nothing. For each, say which people it especially suits and why, using their notes.
+Suggest exactly 6 things to do or places to go together${state.mode==='instore'?' that can be booked or simply turned up to TODAY':''}${countries.length>1?`. The group lives across ${countries.join(', ')}, so include options that work remotely or in whichever city they are most likely to meet, and say which`:` in ${countries[0]==='United Kingdom'?'London (or a day trip from it)':countries[0]}`}, each chosen so it suits the mix of people above. Be specific: name the actual venue, class, restaurant, walk, show or activity. Mix at least two price levels and at least one option that costs almost nothing. For each, say which people it especially suits and why, using their notes.
 
 Respond with JSON only, in this exact shape:
 {"ideas":[{"title":"","type":"experience","why":"one sentence on why it fits this group","suits":"which people it especially suits and why","price":"£xx per head","where":"venue or area, and how to book","fast":true}]}`;
     try{
-      const out=await ask(prompt, SCHEMA_IDEAS); const ideas=(out&&out.ideas)||[]; if(!ideas.length) throw {code:'empty'};
+      const out=await ask(prompt, SCHEMA_IDEAS, {enrich:true, mode:state.mode, area:state.area, country:countries.length===1?countries[0]:''}); const ideas=(out&&out.ideas)||[]; if(!ideas.length) throw {code:'empty'};
       st.textContent='';
       list.innerHTML=ideas.map((i,k)=>`<li class="sug">
         <div class="ti"><span class="kind ${i.type==='object'?'object':'experience'}">${i.type==='object'?'OBJ':'EXP'}</span>${esc(i.title)}</div>
         <div class="why">${esc(i.why)}</div>${i.suits?`<div class="suits">${esc(i.suits)}</div>`:''}
-        <div class="where">${esc(i.where||'')}${i.fast?'<span class="fast">48h</span>':''}</div>
+        <div class="where">${esc(i.where||'')}${i.fast?'<span class="fast">48h</span>':''}</div>${linksFor(i,state.mode,state.area,countries.length===1?countries[0]:'')}
         <div class="foot"><b>${esc(i.price||'')}</b><button class="btn sm sun" data-gsave="${k}">Save to ${team?'everyone':'each person'}</button></div></li>`).join('');
       list.querySelectorAll('[data-gsave]').forEach(b=>b.onclick=()=>{ const i=ideas[+b.dataset.gsave];
-        for(const p of picked){ p.ideas.unshift({id:uid(), title:i.title, type:i.type==='object'?'object':'experience', link:'', price:i.price||'', fast:!!i.fast, given:false, why:i.why||''}); }
+        for(const p of picked){ p.ideas.unshift({id:uid(), title:i.title, type:i.type==='object'?'object':'experience', link:i.url||'', price:i.price||'', fast:!!i.fast, given:false, why:i.why||''}); }
         save(); b.textContent='Saved'; b.disabled=true; toast('Saved to '+picked.length+' people.'); });
     }catch(e){ const c=e&&e.code; st.textContent = c==='not_granted'?'Suggestions were declined for this page.' : c==='rate_limited'?'Too many requests just now. Try again in a minute.' : c==='not_configured'?'Suggestions aren\'t configured on this deployment yet.' : 'Couldn\'t get suggestions this time. Try again.'; }
     finally{ btn.disabled=!(sampleReady||serverReady)||picked.length<2; }
@@ -582,6 +623,50 @@ Respond with JSON only: {"messages":[{"label":"three-word label","text":"the mes
     }catch(e){ const c=e&&e.code; st.textContent = c==='not_granted'?'Writing was declined for this page.' : c==='rate_limited'?'Too many requests just now. Try again in a minute.' : 'Couldn\'t write messages this time. Try again.'; }
     finally{ btn.disabled=!(sampleReady||serverReady); }
   }
+
+
+  // ---- Accounts and shared households (Supabase). Only lights up when the site is configured for it.
+  let sb=null, sbUser=null, sbCode=null, pushTimer=null;
+  function renderAuth(){
+    const el=$('#auth'); if(!el) return;
+    if(!sb){ el.innerHTML=''; return; }
+    if(!sbUser){ el.innerHTML='<button class="btn sm ghost" id="signin">Sign in</button>'; $('#signin').onclick=signInDialog; return; }
+    el.innerHTML=`<span class="who">${esc(sbUser.email)}</span> <span class="who">household <code>${esc(sbCode||'…')}</code></span> <button class="btn sm ghost" id="join">Join a household</button> <button class="btn sm ghost" id="signout">Sign out</button>`;
+    $('#join').onclick=async()=>{ const c=prompt('Enter the household code someone shared with you. Your people will be replaced by theirs, so copy anything you want to keep first.'); if(!c) return;
+      try{ const {data,error}=await sb.rpc('join_household',{join_code:c}); if(error) throw error; sbCode=data; await pullState(true); toast('Joined household '+data+'.'); }catch(e){ alert(e.message||'Could not join.'); } };
+    $('#signout').onclick=async()=>{ await sb.auth.signOut(); sbUser=null; sbCode=null; renderAuth(); toast('Signed out. Your notes stay on this device.'); };
+  }
+  function signInDialog(){
+    const d=$('#dlg'); $('#dlgIn').innerHTML=`<h2>Sign in</h2><p class="small" style="margin-bottom:10px">We email you a link. No password. Signing in keeps your people safe if you clear this browser, and lets you share them with someone in your household.</p>
+      <form id="siForm" class="form" style="border:none;padding:0"><label for="siEmail">Email</label><input type="email" id="siEmail" required placeholder="you@example.com"><div class="dlgrow"><button type="button" class="btn ghost" id="siCancel">Cancel</button><button class="btn primary" type="submit">Email me a link</button></div></form>`;
+    $('#siCancel').onclick=()=>d.close();
+    $('#siForm').onsubmit=async e=>{ e.preventDefault(); const email=$('#siEmail').value.trim();
+      const {error}=await sb.auth.signInWithOtp({email, options:{emailRedirectTo: location.origin+location.pathname}});
+      if(error){ alert(error.message); return; } $('#dlgIn').innerHTML=`<h2>Check your email</h2><p>We sent a sign-in link to <b>${esc(email)}</b>. Open it on this device.</p><div class="dlgrow"><button class="btn primary" id="siOk">OK</button></div>`; $('#siOk').onclick=()=>d.close(); };
+    d.showModal();
+  }
+  async function pullState(force){
+    const {data,error}=await sb.from('household_state').select('data').maybeSingle();
+    if(error){ console.warn(error); return; }
+    const cloud=data&&data.data; const cloudHas=cloud&&Array.isArray(cloud.people)&&cloud.people.length;
+    const localHas=state.people.some(p=>!p.example);
+    if(cloudHas && (force || !localHas)){ state={...cloud, sel:cloud.people[0]?.id||null, view:'person'}; save(); render(); }
+    else if(!cloudHas && localHas){ await pushState(); }
+  }
+  async function pushState(){ if(!sb||!sbUser) return; const doc={...state}; delete doc.sel; delete doc.view; delete doc.group; const {error}=await sb.rpc('save_state',{doc}); if(error) console.warn(error); }
+  const _save=save; save=function(){ _save(); if(sb&&sbUser){ clearTimeout(pushTimer); pushTimer=setTimeout(pushState, 800); } };
+  (async()=>{
+    if(!location.protocol.startsWith('http')) return;
+    let cfg=null; try{ cfg=await (await fetch('/api/config')).json(); }catch(e){ return; }
+    if(!cfg||!cfg.supabaseUrl||!cfg.supabaseAnonKey) return;
+    await new Promise((res,rej)=>{ const sc=document.createElement('script'); sc.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js'; sc.onload=res; sc.onerror=rej; document.head.appendChild(sc); }).catch(()=>null);
+    if(!window.supabase) return;
+    sb=window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+    const {data:{session}}=await sb.auth.getSession(); sbUser=session?.user||null;
+    sb.auth.onAuthStateChange(async(_e,sess)=>{ const was=!!sbUser; sbUser=sess?.user||null; if(sbUser&&!was){ const {data}=await sb.rpc('ensure_household'); sbCode=data; await pullState(false); } renderAuth(); });
+    if(sbUser){ const {data}=await sb.rpc('ensure_household'); sbCode=data; await pullState(false); }
+    renderAuth();
+  })();
 
   render();
 })();

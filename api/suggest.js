@@ -1,6 +1,7 @@
 // Vercel serverless function: the page posts a prompt and the JSON shape it expects,
 // this returns Claude's answer as parsed JSON. The API key never leaves the server.
 import Anthropic from "@anthropic-ai/sdk";
+import { search, provider, retailerDomains } from "./_search.js";
 
 const MAX_PROMPT_CHARS = 20000;
 
@@ -9,7 +10,7 @@ export default async function handler(req, res) {
 
   if (req.method === "GET") {
     // Readiness probe used by the page to decide whether to enable the buttons.
-    return res.status(200).json({ ok: true, configured: Boolean(process.env.ANTHROPIC_API_KEY) });
+    return res.status(200).json({ ok: true, configured: Boolean(process.env.ANTHROPIC_API_KEY), search: provider() });
   }
   if (req.method !== "POST") {
     res.setHeader("Allow", "GET, POST");
@@ -19,7 +20,7 @@ export default async function handler(req, res) {
     return res.status(503).json({ error: "not_configured", message: "ANTHROPIC_API_KEY is not set on this deployment." });
   }
 
-  const { prompt, schema } = req.body || {};
+  const { prompt, schema, enrich, mode, area, country } = req.body || {};
   if (typeof prompt !== "string" || !prompt.trim() || prompt.length > MAX_PROMPT_CHARS) {
     return res.status(400).json({ error: "bad_request", message: "prompt must be a non-empty string." });
   }
@@ -45,6 +46,20 @@ export default async function handler(req, res) {
     let parsed;
     try { parsed = JSON.parse(text); }
     catch { return res.status(502).json({ error: "bad_json", message: "The model returned something that was not JSON." }); }
+
+    // Attach real links. Online: a product page from a retailer. In person: the shop's page, plus a maps link the page builds itself.
+    if (enrich && Array.isArray(parsed.ideas) && provider()) {
+      const domains = mode === "instore" ? null : retailerDomains(country);
+      parsed.ideas = await Promise.all(parsed.ideas.slice(0, 8).map(async (idea) => {
+        const q = mode === "instore"
+          ? `${idea.where || idea.title} ${area || ""} opening hours`.trim()
+          : `${idea.title} buy${country && !/united kingdom/i.test(country) ? " " + country : " UK"}`;
+        const hits = await search(q, { domains, max: 3 });
+        const best = hits[0];
+        return best ? { ...idea, url: best.url, url_title: best.title, url_snippet: (best.snippet || "").slice(0, 200) } : idea;
+      }));
+      parsed.search = provider();
+    }
     return res.status(200).json(parsed);
   } catch (err) {
     if (err instanceof Anthropic.RateLimitError) {
