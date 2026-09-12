@@ -1,36 +1,22 @@
 <title>Keepsake</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Manrope:wght@400;500;600;700;800&display=swap">
 <style>
 :root{
-  --paper:#FFF8EE; --card:#FFFFFF; --ink:#2A2440; --muted:#6B6480; --line:#F0E4D2; --soft:#FFF1DC;
-  --tangerine:#FF6B35; --marigold:#FFC532; --pistachio:#3DBB86; --cornflower:#4F7CFF; --bubblegum:#FF5DA2;
-  --tangerine-ink:#FFFFFF; --chip:#FFF3E6; --chip-ink:#B4451B; --shadow:0 10px 30px rgba(42,36,64,.08);
-  --focus:#4F7CFF;
-  color-scheme: light;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --paper:#1E1B2E; --card:#2A2640; --ink:#F6F1FF; --muted:#B3ABC9; --line:#3B3654; --soft:#332E4D;
-    --tangerine:#FF7D4D; --marigold:#FFD053; --pistachio:#5FD6A3; --cornflower:#7A9BFF; --bubblegum:#FF7AB8;
-    --tangerine-ink:#1E1B2E; --chip:#3A3256; --chip-ink:#FFC9AE; --shadow:0 10px 30px rgba(0,0,0,.35);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"]{
-  --paper:#1E1B2E; --card:#2A2640; --ink:#F6F1FF; --muted:#B3ABC9; --line:#3B3654; --soft:#332E4D;
-  --tangerine:#FF7D4D; --marigold:#FFD053; --pistachio:#5FD6A3; --cornflower:#7A9BFF; --bubblegum:#FF7AB8;
-  --tangerine-ink:#1E1B2E; --chip:#3A3256; --chip-ink:#FFC9AE; --shadow:0 10px 30px rgba(0,0,0,.35);
+  --paper:#171331; --card:#211B44; --soft:#2B2456; --line:#3A3268; --ink:#FBF8FF; --muted:#BDB5DB;
+  --tangerine:#FF7A45; --marigold:#FFC93C; --pistachio:#5EE0A8; --cornflower:#7C9CFF; --bubblegum:#FF6FB5;
+  --tangerine-ink:#1B1530; --chip:#3B3270; --chip-ink:#FFD6C2; --shadow:0 14px 34px rgba(0,0,0,.35);
+  --focus:#FFC93C;
   color-scheme: dark;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
 body{
   background:var(--paper); color:var(--ink);
-  font-family:"Nunito", "Segoe UI", system-ui, sans-serif; font-size:15px; line-height:1.5;
+  font-family:"Manrope", "Segoe UI", system-ui, sans-serif; font-size:16px; line-height:1.55;
   min-height:100vh;
 }
-h1,h2,h3,.display{font-family:"Fredoka","Nunito",system-ui,sans-serif; letter-spacing:-.01em; text-wrap:balance; margin:0}
+h1,h2,h3,.display{font-family:"Bricolage Grotesque","Manrope",system-ui,sans-serif; font-weight:800; letter-spacing:-.02em; font-variation-settings:"opsz" 96; text-wrap:balance; margin:0}
 a{color:var(--cornflower)}
 button{font:inherit; cursor:pointer}
 input,select,textarea{font:inherit; color:var(--ink); background:var(--card); border:1.5px solid var(--line); border-radius:12px; padding:9px 12px; width:100%}
@@ -40,25 +26,24 @@ textarea{min-height:80px; resize:vertical}
 
 /* header: wrapping-paper confetti */
 .top{
-  position:relative; overflow:hidden; padding:22px 24px 18px; border-bottom:2px solid var(--line);
+  position:relative; overflow:hidden; padding:24px 24px 20px; border-bottom:1.5px solid var(--line);
   background:
-    radial-gradient(circle at 12% 30%, var(--marigold) 0 5px, transparent 6px),
-    radial-gradient(circle at 28% 75%, var(--bubblegum) 0 4px, transparent 5px),
-    radial-gradient(circle at 44% 20%, var(--pistachio) 0 4px, transparent 5px),
-    radial-gradient(circle at 61% 70%, var(--cornflower) 0 5px, transparent 6px),
-    radial-gradient(circle at 78% 25%, var(--tangerine) 0 4px, transparent 5px),
-    radial-gradient(circle at 92% 65%, var(--marigold) 0 4px, transparent 5px),
+    radial-gradient(circle at 10% 20%, rgba(255,122,69,.35), transparent 32%),
+    radial-gradient(circle at 85% 30%, rgba(124,156,255,.35), transparent 30%),
+    radial-gradient(circle at 55% 110%, rgba(255,111,181,.30), transparent 34%),
     var(--card);
 }
+.top::after{content:""; position:absolute; left:0; right:0; bottom:0; height:5px;
+  background:linear-gradient(90deg,var(--tangerine),var(--marigold),var(--pistachio),var(--cornflower),var(--bubblegum));}
 .top .row{display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; max-width:1180px; margin:0 auto}
 .brand{display:flex; align-items:center; gap:12px}
 .bow{
   width:44px; height:44px; border-radius:14px; display:grid; place-items:center;
-  background:linear-gradient(135deg,var(--tangerine),var(--bubblegum)); color:#fff; font-family:"Fredoka"; font-weight:700; font-size:24px;
+  background:linear-gradient(135deg,var(--tangerine),var(--bubblegum)); color:#fff; font-family:"Bricolage Grotesque"; font-weight:700; font-size:24px;
   box-shadow:0 6px 16px rgba(255,107,53,.35);
 }
-.brand h1{font-size:30px; font-weight:700}
-.brand small{display:block; color:var(--muted); font-family:"Nunito"; font-weight:600; font-size:13px; letter-spacing:.01em}
+.brand h1{font-size:34px}
+.brand small{display:block; color:var(--muted); font-family:"Manrope"; font-weight:600; font-size:13px; letter-spacing:.01em}
 .actions{display:flex; gap:8px; flex-wrap:wrap}
 
 .btn{
@@ -67,8 +52,8 @@ textarea{min-height:80px; resize:vertical}
 }
 .btn:hover{transform:translateY(-1px); box-shadow:var(--shadow)}
 .btn.primary{background:var(--tangerine); color:var(--tangerine-ink); box-shadow:0 8px 18px rgba(255,107,53,.30)}
-.btn.sun{background:var(--marigold); color:#2A2440}
-.btn.mint{background:var(--pistachio); color:#12301F}
+.btn.sun{background:var(--marigold); color:#1B1530}
+.btn.mint{background:var(--pistachio); color:#0F2E20}
 .btn.sm{padding:7px 12px; font-size:13px}
 .btn.ghost{background:transparent; border:1.5px solid var(--line)}
 .btn[disabled]{opacity:.55; cursor:not-allowed; transform:none; box-shadow:none}
@@ -78,29 +63,29 @@ textarea{min-height:80px; resize:vertical}
 @media (max-width:860px){ .app{grid-template-columns:1fr} }
 .panel{background:var(--card); border:1.5px solid var(--line); border-radius:20px}
 .side{padding:16px; align-self:start; position:sticky; top:16px}
-.side h2{font-size:18px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center}
-.count{font-family:"Nunito"; font-size:12px; font-weight:800; color:var(--muted); letter-spacing:.06em; text-transform:uppercase}
+.side h2{font-size:20px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center}
+.count{font-family:"Manrope"; font-size:12px; font-weight:800; color:var(--muted); letter-spacing:.06em; text-transform:uppercase}
 .people{display:flex; flex-direction:column; gap:6px; list-style:none; margin:0; padding:0}
 .person{
   display:grid; grid-template-columns:44px 1fr auto; align-items:center; gap:10px; width:100%; text-align:left;
   padding:8px; border-radius:14px; border:1.5px solid transparent; background:transparent; color:var(--ink);
 }
 .person:hover{background:var(--soft)}
-.person.active{background:var(--soft); border-color:var(--marigold)}
-.avatar{width:44px; height:44px; border-radius:14px; display:grid; place-items:center; font-size:24px; background:var(--chip)}
+.person.active{background:var(--soft); border-color:var(--acc, var(--marigold))}
+.avatar{width:44px; height:44px; border-radius:14px; display:grid; place-items:center; font-size:24px; background:var(--acc, var(--chip)); box-shadow:inset 0 0 0 2px rgba(255,255,255,.08)}
 .person .name{font-weight:800; line-height:1.15}
 .person .rel{font-size:12px; color:var(--muted); font-weight:600}
 .due{font-size:11px; font-weight:800; padding:4px 8px; border-radius:999px; background:var(--chip); color:var(--chip-ink); white-space:nowrap}
-.due.soon{background:var(--marigold); color:#2A2440}
+.due.soon{background:var(--marigold); color:#1B1530}
 .due.today{background:var(--bubblegum); color:#fff}
 
 .main{padding:22px; min-height:520px}
 .empty{padding:40px 20px; text-align:center; color:var(--muted)}
 .empty h2{color:var(--ink); font-size:26px; margin-bottom:8px}
 
-.profile{display:grid; grid-template-columns:72px 1fr auto; gap:16px; align-items:start; padding-bottom:18px; border-bottom:2px dashed var(--line); margin-bottom:18px}
+.profile{display:grid; grid-template-columns:72px 1fr auto; gap:16px; align-items:start; padding-bottom:18px; border-bottom:3px solid var(--acc, var(--line)); margin-bottom:18px}
 .profile .avatar{width:72px; height:72px; font-size:40px; border-radius:20px}
-.profile h2{font-size:30px}
+.profile h2{font-size:34px}
 .meta{display:flex; flex-wrap:wrap; gap:6px 14px; color:var(--muted); font-weight:600; font-size:13.5px; margin-top:4px}
 .meta a{font-weight:700}
 .pill{display:inline-block; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:800; background:var(--chip); color:var(--chip-ink)}
@@ -108,8 +93,8 @@ textarea{min-height:80px; resize:vertical}
 
 .sections{display:grid; grid-template-columns:1fr 1fr; gap:18px}
 @media (max-width:1000px){ .sections{grid-template-columns:1fr} }
-.sec h3{font-size:19px; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px}
-.sec h3 .hint{font-family:"Nunito"; font-size:12px; font-weight:700; color:var(--muted); letter-spacing:.04em; text-transform:uppercase}
+.sec h3{font-size:22px; padding-bottom:6px; border-bottom:2px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px}
+.sec h3 .hint{font-family:"Manrope"; font-size:12px; font-weight:700; color:var(--muted); letter-spacing:.04em; text-transform:uppercase}
 .log{list-style:none; margin:0 0 12px; padding:0; display:flex; flex-direction:column; gap:8px; max-height:340px; overflow:auto}
 .note{background:var(--soft); border-radius:14px; padding:10px 12px}
 .note .d{font-size:12px; font-weight:800; color:var(--muted); letter-spacing:.04em}
@@ -117,7 +102,7 @@ textarea{min-height:80px; resize:vertical}
 .note img{max-width:100%; border-radius:10px; margin-top:6px; display:block}
 .tags{display:flex; flex-wrap:wrap; gap:6px}
 .tag{font-size:11.5px; font-weight:800; padding:3px 9px; border-radius:999px; background:var(--card); border:1.5px solid var(--line); color:var(--ink)}
-.tag.on,.tagbtn.on{background:var(--marigold); border-color:var(--marigold); color:#2A2440}
+.tag.on,.tagbtn.on{background:var(--marigold); border-color:var(--marigold); color:#1B1530}
 .tagbtn{font-size:12px; font-weight:800; padding:5px 10px; border-radius:999px; background:var(--card); border:1.5px solid var(--line); color:var(--ink)}
 .form{display:grid; gap:8px; background:var(--card); border:1.5px dashed var(--line); border-radius:14px; padding:12px}
 .form .two{display:grid; grid-template-columns:1fr 1fr; gap:8px}
@@ -126,17 +111,17 @@ textarea{min-height:80px; resize:vertical}
 .ideas{list-style:none; margin:0 0 12px; padding:0; display:flex; flex-direction:column; gap:8px}
 .idea{display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:start; background:var(--soft); border-radius:14px; padding:10px 12px}
 .idea.given{opacity:.6}
-.kind{width:34px; height:34px; border-radius:10px; display:grid; place-items:center; font-weight:800; font-size:12px; font-family:"Fredoka"}
-.kind.object{background:var(--cornflower); color:#fff}
-.kind.experience{background:var(--pistachio); color:#12301F}
+.kind{width:34px; height:34px; border-radius:10px; display:grid; place-items:center; font-weight:800; font-size:12px; font-family:"Bricolage Grotesque"}
+.kind.object{background:var(--cornflower); color:#0F1A3A}
+.kind.experience{background:var(--pistachio); color:#0F2E20}
 .idea .ti{font-weight:800}
 .idea .why{font-size:13px; color:var(--muted)}
 .idea .pr{font-size:12.5px; font-weight:800; margin-top:3px}
 .fast{font-size:11px; font-weight:800; color:var(--chip-ink); background:var(--chip); padding:2px 7px; border-radius:999px; margin-left:6px}
 .filters{display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap}
 
-.ai{margin-top:18px; padding:16px; border-radius:18px; background:linear-gradient(135deg, var(--soft), var(--card)); border:1.5px solid var(--line)}
-.ai h3{font-size:19px; margin-bottom:6px}
+.ai{margin-top:18px; padding:18px; border-radius:18px; background:linear-gradient(135deg, rgba(255,122,69,.14), rgba(124,156,255,.14)), var(--card); border:1.5px solid var(--line)}
+.ai h3{font-size:22px; margin-bottom:6px}
 .ai p{margin:0 0 10px; color:var(--muted); font-size:13.5px}
 .ai .row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
 .ai select{width:auto}
@@ -149,16 +134,17 @@ textarea{min-height:80px; resize:vertical}
 .status{font-size:13px; font-weight:700; color:var(--muted); margin-top:8px; min-height:1.4em}
 
 dialog{border:none; border-radius:22px; padding:0; width:min(560px, 92vw); background:var(--card); color:var(--ink); box-shadow:var(--shadow)}
-dialog::backdrop{background:rgba(42,36,64,.45)}
+dialog::backdrop{background:rgba(10,8,24,.6)}
 dialog .in{padding:22px}
 dialog h2{font-size:24px; margin-bottom:12px}
 .emojis{display:flex; flex-wrap:wrap; gap:6px}
 .emojis button{width:38px; height:38px; border-radius:10px; border:1.5px solid var(--line); background:var(--card); font-size:20px}
 .emojis button.on{border-color:var(--tangerine); background:var(--chip)}
 .dlgrow{display:flex; gap:8px; justify-content:flex-end; margin-top:14px}
-.foot-note{font-size:12.5px; color:var(--muted); text-align:center; max-width:1180px; margin:0 auto; padding:0 24px 30px}
+.linkbtn{background:none; border:none; color:var(--cornflower); font-weight:700; text-decoration:underline; padding:0}
+.foot-note{font-size:13px; color:var(--muted); text-align:center; max-width:1180px; margin:0 auto; padding:0 24px 30px}
 .example-badge{font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); border:1.5px dashed var(--line); padding:2px 7px; border-radius:999px}
-.toast{position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--ink); color:var(--paper); padding:10px 16px; border-radius:999px; font-weight:800; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:opacity .2s}
+.toast{position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--marigold); color:#1B1530; padding:10px 16px; border-radius:999px; font-weight:800; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:opacity .2s}
 .toast.show{opacity:1}
 @media (prefers-reduced-motion: reduce){ .btn{transition:none} .toast{transition:none} }
 </style>
@@ -173,9 +159,6 @@ dialog h2{font-size:24px; margin-bottom:12px}
       </div>
     </div>
     <div class="actions">
-      <button class="btn ghost sm" id="btnExport" title="Copy your data as text so you can paste it to someone else">Copy backup</button>
-      <button class="btn ghost sm" id="btnImport">Paste backup</button>
-      <button class="btn ghost sm" id="btnReset">Reset examples</button>
       <button class="btn primary" id="btnAdd">+ Add a person</button>
     </div>
   </div>
@@ -189,7 +172,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
   <section class="panel main" id="main"></section>
 </main>
 
-<p class="foot-note">Working title. Your data stays in this browser until you copy a backup. Nothing is pulled from Instagram or anywhere else: what you know about someone, you add yourself.</p>
+<p class="foot-note">Working title. Everything you add stays on this device. Nothing is pulled from Instagram or anywhere else: what you know about someone, you add yourself. <button class="linkbtn" id="btnReset">Start again with the examples</button></p>
 
 <dialog id="dlg"><div class="in" id="dlgIn"></div></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -198,6 +181,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
 (function(){
   const KEY='keepsake.v1';
   const TAGS=['music','books','food & drink','pampering','home','fashion','outdoors','tech','art','travel','sport','wellness','kids','plants','games'];
+  const ACCENTS=['tangerine','marigold','pistachio','cornflower','bubblegum'];
   const EMOJIS=['🌻','🎸','📚','🍰','🧘','🏔️','🎨','🐶','🌊','🍷','⚽','🎬','🧶','🚴','🌿','🎹','☕','🦋','🪴','🎁','✨','🌈','🐱','🍜'];
   const today=()=>new Date().toISOString().slice(0,10);
   const uid=()=>Math.random().toString(36).slice(2,10);
@@ -252,11 +236,11 @@ dialog h2{font-size:24px; margin-bottom:12px}
     $('#count').textContent=state.people.length+(state.people.length===1?' person':' people');
     const sorted=[...state.people].sort((a,b)=>{const da=daysToBirthday(a.birthday)??999, db=daysToBirthday(b.birthday)??999; return da-db;});
     for(const p of sorted){
-      const li=document.createElement('li'); const b=document.createElement('button');
+      const li=document.createElement('li'); const b=document.createElement('button'); const acc=ACCENTS[state.people.indexOf(p)%ACCENTS.length];
       b.className='person'+(p.id===state.sel?' active':''); b.setAttribute('aria-pressed', p.id===state.sel);
       const dd=daysToBirthday(p.birthday);
       let due=''; if(dd!==null){ due=`<span class="due ${dd===0?'today':dd<=14?'soon':''} tabular">${dd===0?'Today!':dd+'d'}</span>`; }
-      b.innerHTML=`<span class="avatar" aria-hidden="true">${esc(p.emoji)}</span><span><span class="name">${esc(p.name)}</span><br><span class="rel">${esc(p.rel)}</span></span>${due}`;
+      b.style.setProperty('--acc',`var(--${acc})`); b.innerHTML=`<span class="avatar" aria-hidden="true">${esc(p.emoji)}</span><span><span class="name">${esc(p.name)}</span><br><span class="rel">${esc(p.rel)}</span></span>${due}`;
       b.onclick=()=>{state.sel=p.id; save(); render();};
       li.appendChild(b); ul.appendChild(li);
     }
@@ -266,7 +250,7 @@ dialog h2{font-size:24px; margin-bottom:12px}
   function renderMain(){
     const m=$('#main'); const p=person();
     if(!p){ m.innerHTML=`<div class="empty"><h2>No one here yet</h2><p>Add the people you buy for most. Then jot down what you learn about them as you go, and Keepsake turns it into gift ideas when an occasion comes round.</p><p><button class="btn primary" id="emptyAdd">+ Add a person</button></p></div>`; $('#emptyAdd').onclick=openAdd; return; }
-    const dd=daysToBirthday(p.birthday);
+    const dd=daysToBirthday(p.birthday); const acc=ACCENTS[state.people.indexOf(p)%ACCENTS.length]; m.style.setProperty('--acc',`var(--${acc})`);
     const meta=[];
     if(p.birthday) meta.push(`<span>🎂 ${fmt(p.birthday)}${dd!==null?` <b class="tabular">(${dd===0?'today':'in '+dd+' days'})</b>`:''}</span>`);
     if(p.budget) meta.push(`<span>Usual budget <b>£${esc(p.budget)}</b></span>`);
@@ -391,8 +375,6 @@ dialog h2{font-size:24px; margin-bottom:12px}
   const openAdd=()=>openDialog(null); const openEdit=p=>openDialog(p);
   $('#btnAdd').onclick=openAdd;
   $('#btnReset').onclick=()=>{ if(confirm('Replace everything with the example people?')){ state=seed(); state.sel=state.people[0].id; save(); render(); } };
-  $('#btnExport').onclick=async()=>{ try{ await navigator.clipboard.writeText(JSON.stringify(state)); toast('Backup copied. Paste it into a message to share.'); }catch(e){ prompt('Copy this text:', JSON.stringify(state)); } };
-  $('#btnImport').onclick=()=>{ const s=prompt('Paste a Keepsake backup:'); if(!s) return; try{ const o=JSON.parse(s); if(!Array.isArray(o.people)) throw 0; state=o; state.sel=state.people[0]?.id||null; save(); render(); toast('Restored.'); }catch(e){ alert('That didn\'t look like a Keepsake backup.'); } };
 
   // ---- suggestions via the claude.ai viewer
   let sample=null, sampleReady=false, sampleChecked=false;
