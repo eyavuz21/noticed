@@ -41,16 +41,11 @@ npx vercel dev
 
 and put `ANTHROPIC_API_KEY=...` in a `.env` file (gitignored).
 
-## Deploying to Vercel
+## Deploying
 
-```
-npx vercel login
-npx vercel --prod
-npx vercel env add ANTHROPIC_API_KEY production   # paste the key when prompted
-npx vercel --prod                                  # redeploy so the function picks it up
-```
+The repo is connected to Vercel: every push to `main` deploys to https://giftlore.vercel.app automatically. Pull requests get a preview URL.
 
-Framework preset "Other", no build command. Vercel serves `index.html` as static and `api/suggest.js` as a Node function automatically. Get an API key at console.anthropic.com.
+To deploy by hand instead: `npx vercel --prod`. The only environment variable is `ANTHROPIC_API_KEY` (production), already set. Get a key at console.anthropic.com.
 
 ## Roadmap
 
