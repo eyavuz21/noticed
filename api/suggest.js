@@ -49,12 +49,20 @@ export default async function handler(req, res) {
 
     // Attach real links. Online: a product page from a retailer. In person: the shop's page, plus a maps link the page builds itself.
     if (enrich && Array.isArray(parsed.ideas) && provider()) {
-      const domains = mode === "instore" ? null : retailerDomains(country);
       parsed.ideas = await Promise.all(parsed.ideas.slice(0, 8).map(async (idea) => {
-        const q = mode === "instore"
-          ? `${idea.where || idea.title} ${area || ""} opening hours`.trim()
-          : `${idea.title} buy${country && !/united kingdom/i.test(country) ? " " + country : " UK"}`;
-        const hits = await search(q, { domains, max: 3 });
+        let q, domains;
+        if (mode === "instore") {
+          q = `${idea.where || idea.title} ${area || ""} opening hours`.trim(); domains = null;
+        } else {
+          // If the model named a site, search that site; if it named a shop, put the shop in the query; otherwise bias to known retailers.
+          const site = (idea.where || "").match(/([a-z0-9-]+\.(?:co\.uk|com|org\.uk|org|net|io|shop))/i);
+          const shop = (idea.where || "").split(/[(,;]| or | via /i)[0].trim();
+          if (site) { q = `${idea.title}`; domains = [site[1].toLowerCase()]; }
+          else if (shop && shop.length < 40) { q = `${idea.title} ${shop}`; domains = null; }
+          else { q = `${idea.title} buy${country && !/united kingdom/i.test(country) ? " " + country : " UK"}`; domains = retailerDomains(country); }
+        }
+        let hits = await search(q, { domains, max: 3 });
+        if (!hits.length && mode !== "instore") hits = await search(`${idea.title} buy UK`, { domains: retailerDomains(country), max: 3 });
         const best = hits[0];
         return best ? { ...idea, url: best.url, url_title: best.title, url_snippet: (best.snippet || "").slice(0, 200) } : idea;
       }));
