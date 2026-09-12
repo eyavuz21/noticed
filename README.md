@@ -1,12 +1,13 @@
-# Wrapid
+# Giftlore
 
 A private log of what you learn about the people you love, turned into gift ideas when an occasion comes round.
 
-**Live MVP:** https://claude.ai/code/artifact/80e302cc-ce64-4454-ba60-b2415c5bff33
+**Live site:** https://giftlore.vercel.app
+**Also on claude.ai:** https://claude.ai/code/artifact/80e302cc-ce64-4454-ba60-b2415c5bff33
 
 ## The idea
 
-Most gifting apps start from the shop. Wrapid starts from the person. You keep a short, private record of the things people tell you in passing (she's started pottery, he misses proper Turkish coffee, she keeps quoting *Olive Kitteridge*), and when a birthday comes round the app reads those notes and suggests gifts that actually connect to them: objects, experiences, places to go, or something to pay for on their behalf. Mostly things you can get in the UK within 48 hours.
+Most gifting apps start from the shop. Giftlore starts from the person. You keep a short, private record of the things people tell you in passing (she's started pottery, he misses proper Turkish coffee, she keeps quoting *Olive Kitteridge*), and when a birthday comes round the app reads those notes and suggests gifts that actually connect to them: objects, experiences, places to go, or something to pay for on their behalf. Mostly things you can get in the UK within 48 hours.
 
 The longer you use it, the better it gets, and the harder it is to leave. The notes are the product.
 
@@ -66,4 +67,4 @@ See the planning doc for the full picture. In order:
 
 ## Founders
 
-Emre Yavuz and his sister. September 2026. The name is wrap + rapid.
+Emre Yavuz and his sister. September 2026. The name is gift + lore: the lore being everything you know about a person.
