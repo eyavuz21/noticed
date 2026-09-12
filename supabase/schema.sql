@@ -50,7 +50,7 @@ declare hid uuid; hcode text;
 begin
   select household_id into hid from public.members where user_id = auth.uid();
   if hid is null then
-    hcode := upper(substr(encode(gen_random_bytes(6), 'base32'), 1, 6));
+    hcode := upper(substr(encode(gen_random_bytes(4), 'hex'), 1, 6));
     insert into public.households (code) values (hcode) returning id into hid;
     insert into public.members (user_id, household_id) values (auth.uid(), hid);
     insert into public.household_state (household_id, data) values (hid, '{}'::jsonb);
